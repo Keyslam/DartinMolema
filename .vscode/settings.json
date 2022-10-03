@@ -1,0 +1,13 @@
+{
+    "[csharp]": {
+        "editor.codeLens": false,
+        "editor.formatOnType": true,
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file"
+    },
+    "files.exclude": {
+        "**/bin": true,
+        "**/obj": true,
+    }
+}
