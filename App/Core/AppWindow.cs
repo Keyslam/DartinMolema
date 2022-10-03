@@ -21,7 +21,7 @@ public class AppWindow
     public void Run()
     {
         var windowOptions = WindowOptions.Default;
-        windowOptions.Size = new Vector2D<int>(1280, 720);
+        windowOptions.Size = new Vector2D<int>(1920, 1080);
         windowOptions.Title = "DartApp";
 
         window = Window.Create(windowOptions);
