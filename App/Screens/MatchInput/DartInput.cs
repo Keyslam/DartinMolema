@@ -1,6 +1,6 @@
 using App.Models;
 
-namespace App;
+namespace App.Screens.MatchInput;
 
 public class DartInput
 {
@@ -8,7 +8,8 @@ public class DartInput
     public string Input
     {
         get => input;
-        set {
+        set
+        {
             this.input = value;
 
             this.IsValid = this.ParseInput(this.input, out uint newValue, out ThrowKind throwKind);
@@ -28,7 +29,7 @@ public class DartInput
         this.IsValid = false;
         this.Value = 0;
         this.ThrowKind = ThrowKind.None;
-        
+
         this.input = string.Empty;
     }
 

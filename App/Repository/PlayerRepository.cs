@@ -5,58 +5,65 @@ namespace App.Repository;
 
 public class PlayerRepository : IRepository<Player>
 {
-	public void Save(Player player)
-	{
-		var serializedObject = JsonConvert.SerializeObject(player);
-		var filepath = this.PlayerToFilepath(player);
+    public void Save(Player player)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-		Directory.CreateDirectory(Path.GetDirectoryName(filepath)!);
-		File.WriteAllText(filepath, serializedObject);
-	}
+        var serializedObject = JsonConvert.SerializeObject(player);
+        var filepath = this.PlayerToFilepath(player);
 
-	public Player? Read(Guid id)
-	{
-		var filepath = IdToFilepath(id);
+        File.WriteAllText(filepath, serializedObject);
+    }
 
-		return ReadFromFile(filepath);
-	}
+    public Player? Read(Guid id)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-	private Player? ReadFromFile(string filepath)
-	{
-		var serializedObject = File.ReadAllText(filepath);
-		var player = JsonConvert.DeserializeObject<Player>(serializedObject);
+        var filepath = IdToFilepath(id);
 
-		return player;
-	}
+        return ReadFromFile(filepath);
+    }
 
-	public List<Player> ReadAll()
-	{
-		var files = Directory.GetFiles(this.GetBaseDirectory());
-		var players = new List<Player>();
+    private Player? ReadFromFile(string filepath)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-		foreach (var file in files)
-			players.Add(this.ReadFromFile(file)!);
+        var serializedObject = File.ReadAllText(filepath);
+        var player = JsonConvert.DeserializeObject<Player>(serializedObject);
 
-		return players;
-	}
+        return player;
+    }
 
-	public void Delete(Guid id)
-	{
-		throw new NotImplementedException();
-	}
+    public List<Player> ReadAll()
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-	private string GetBaseDirectory()
-	{
-		return $"{Environment.CurrentDirectory}/Data/Players";
-	}
+        var files = Directory.GetFiles(this.GetBaseDirectory());
+        var players = new List<Player>();
 
-	private string PlayerToFilepath(Player player)
-	{
-		return this.IdToFilepath(player.Id);
-	}
+        foreach (var file in files)
+            players.Add(this.ReadFromFile(file)!);
 
-	private string IdToFilepath(Guid id)
-	{
-		return $"{this.GetBaseDirectory()}/{id}.json";
-	}
+        return players;
+    }
+
+    public void Delete(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    private string GetBaseDirectory()
+    {
+        return $"{Environment.CurrentDirectory}/Data/Players";
+    }
+
+    private string PlayerToFilepath(Player player)
+    {
+        return this.IdToFilepath(player.Id);
+    }
+
+    private string IdToFilepath(Guid id)
+    {
+        return $"{this.GetBaseDirectory()}/{id}.json";
+    }
 }

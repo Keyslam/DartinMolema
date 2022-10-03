@@ -1,7 +1,7 @@
 using System.Numerics;
 using ImGuiNET;
 
-namespace App;
+namespace App.Core;
 
 public static class ImGuiExtensions
 {
@@ -15,7 +15,8 @@ public static class ImGuiExtensions
         return ImGui.Button(label, size) || (ImGui.IsItemFocused() && ImGui.IsKeyPressed(ImGuiKey.Enter));
     }
 
-    public static bool KeyboardSelected() {
+    public static bool KeyboardSelected()
+    {
         return ImGui.IsItemFocused() && ImGui.IsKeyPressed(ImGuiKey.Enter);
     }
 }

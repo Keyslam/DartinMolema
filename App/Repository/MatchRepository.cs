@@ -5,37 +5,44 @@ namespace App.Repository;
 
 public class MatchRepository : IRepository<Match>
 {
-	public void Save(Match match)
-	{
-		var serializedObject = JsonConvert.SerializeObject(match);
-		var filepath = this.MatchToFilepath(match);
+    public void Save(Match match)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-		Directory.CreateDirectory(Path.GetDirectoryName(filepath)!);
-		File.WriteAllText(filepath, serializedObject);
-	}
+        var serializedObject = JsonConvert.SerializeObject(match);
+        var filepath = this.MatchToFilepath(match);
+        File.WriteAllText(filepath, serializedObject);
+    }
 
-	public Match? Read(Guid id)
-	{
-		var filepath = IdToFilepath(id);
+    public Match? Read(Guid id)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-		var serializedObject = File.ReadAllText(filepath);
-		var match = JsonConvert.DeserializeObject<Match>(serializedObject);
+        var filepath = IdToFilepath(id);
 
-		return match;
-	}
+        var serializedObject = File.ReadAllText(filepath);
+        var match = JsonConvert.DeserializeObject<Match>(serializedObject);
 
-	public void Delete(Guid id)
-	{
-		throw new NotImplementedException();
-	}
+        return match;
+    }
 
-	private string MatchToFilepath(Match match)
-	{
-		return this.IdToFilepath(match.Id);
-	}
+    public void Delete(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 
-	private string IdToFilepath(Guid id)
-	{
-		return $"{Environment.CurrentDirectory}/Data/Matches/{id}.json";
-	}
+    private string GetBaseDirectory()
+    {
+        return $"{Environment.CurrentDirectory}/Data/Matches";
+    }
+
+    private string MatchToFilepath(Match match)
+    {
+        return this.IdToFilepath(match.Id);
+    }
+
+    private string IdToFilepath(Guid id)
+    {
+        return $"{this.GetBaseDirectory()}/{id}.json";
+    }
 }
