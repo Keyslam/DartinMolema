@@ -2,11 +2,11 @@ using App.Models;
 
 namespace App;
 
-public class MatchFactory
+public class MatchBuilder
 {
 	public Match Result { get; private set; }
 
-	public MatchFactory()
+	public MatchBuilder()
 	{
 		this.Reset();
 	}
@@ -26,51 +26,39 @@ public class MatchFactory
 		this.Result.Sets = new List<Set>();
 	}
 
-	public MatchFactory AddPlayer(Player player)
+	public MatchBuilder AddPlayer(Player player)
 	{
 		this.Result.Players.Add(player.Id);
 		return this;
 	}
 
-	public MatchFactory AddPlayer(Guid playerId)
+	public MatchBuilder AddPlayer(Guid playerId)
 	{
 		this.Result.Players.Add(playerId);
 		return this;
 	}
 
-	public MatchFactory SetSetsToWin(uint setsTowin)
+	public MatchBuilder SetSetsToWin(uint setsTowin)
 	{
 		this.Result.SetsToWin = setsTowin;
 		return this;
 	}
 
-	public MatchFactory SetLegsToWin(uint legsTowin)
+	public MatchBuilder SetLegsToWin(uint legsTowin)
 	{
 		this.Result.LegsToWin = legsTowin;
 		return this;
 	}
 
-	public MatchFactory SetScoreToWin(uint scoreToWin)
+	public MatchBuilder SetScoreToWin(uint scoreToWin)
 	{
 		this.Result.ScoreToWin = scoreToWin;
 		return this;
 	}
 
-
-	public Match CreateDefault()
+	public MatchBuilder SetThrowsPerTurn(uint throwsPerTurn)
 	{
-		var match = new Match();
-
-		match.Id = Guid.NewGuid();
-		match.Date = DateTime.Now;
-		match.Players = new List<Guid>();
-		match.WinnerId = null;
-		match.SetsToWin = 5;
-		match.LegsToWin = 5;
-		match.ScoreToWin = 501;
-		match.ThrowsPerTurn = 3;
-		match.Sets = new List<Set>();
-
-		return match;
+		this.Result.ThrowsPerTurn = throwsPerTurn;
+		return this;
 	}
 }

@@ -5,8 +5,6 @@ using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using ImGuiNET;
 using App.Screens;
-using App.Repository;
-using App.Models;
 
 namespace App;
 
