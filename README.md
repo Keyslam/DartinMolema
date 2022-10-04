@@ -8,8 +8,8 @@
 `NPM any version` 
 
 ## Running the application
-Run (Watch mode) `dotnet watch --project App`\
-Run `dotnet run --project App`\
+Run (Watch mode) `dotnet watch --project src/Core/Common`\
+Run `dotnet run --project src/Core/Common`\
 Test `dotnet test`
 
 Or use the included NPM scripts
