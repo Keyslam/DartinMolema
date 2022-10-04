@@ -8,8 +8,8 @@
 `NPM any version` 
 
 ## Running the application
-Run (Watch mode) `dotnet watch --project App`\
-Run `dotnet run --project App`\
+Run (Watch mode) `dotnet watch --project src/Core/Core.Common`\
+Run `dotnet run --project src/Core/Core.Common`\
 Test `dotnet test`
 
 Or use the included NPM scripts
@@ -17,11 +17,14 @@ Or use the included NPM scripts
 ## Project structure
 ```
 /DartinMolema
-├── /App            The source code of the project
-|   └── ...
-├── /App.Tests      The tests for the source code of the project
-|   └── ...
-└── /Data           The application data, managed by the application 
+├── /src
+|   ├── /Builder        Implementations of the Builder pattern for creating models
+|   ├── /Core           Entry point of the application
+|   ├── /GameRuler      Business logic for handling a match
+|   ├── /Model          Data models for objects in the application
+|   ├── /Repository     Implementations of the Repository pattern for saving and loading models
+|   └── /View           Graphical User Interfaces
+└── /Data               The application data, managed by the application 
     ├── /Players
     |   └── ...
     └── /Matches
