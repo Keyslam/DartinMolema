@@ -1,69 +1,78 @@
-using App.Models;
+using App.Repository.LocalRepository.Models;
 using Newtonsoft.Json;
 
 namespace App.Repository.LocalRepository;
 
-internal class PlayerRepository : PlayerRepository
+public class PlayerRepository : IPlayerRepository
 {
-	public void Save(Player player)
-	{
-		Directory.CreateDirectory(this.GetBaseDirectory());
+    public void Save(App.Models.Player player)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-		var serializedObject = JsonConvert.SerializeObject(player);
-		var filepath = this.PlayerToFilepath(player);
+        var filepath = this.PlayerToFilepath(player);
 
-		File.WriteAllText(filepath, serializedObject);
-	}
+        var jsonPlayer = new Player(player);
+        var serializedObject = JsonConvert.SerializeObject(jsonPlayer);
 
-	public Player? Read(Guid id)
-	{
-		Directory.CreateDirectory(this.GetBaseDirectory());
+        File.WriteAllText(filepath, serializedObject);
+    }
 
-		var filepath = IdToFilepath(id);
+    public App.Models.Player? Read(Guid id)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-		return ReadFromFile(filepath);
-	}
+        var filepath = IdToFilepath(id);
 
-	private Player? ReadFromFile(string filepath)
-	{
-		Directory.CreateDirectory(this.GetBaseDirectory());
+        return ReadFromFile(filepath);
+    }
 
-		var serializedObject = File.ReadAllText(filepath);
-		var player = JsonConvert.DeserializeObject<Player>(serializedObject);
+    private App.Models.Player? ReadFromFile(string filepath)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-		return player;
-	}
+        var serializedObject = File.ReadAllText(filepath);
+        var jsonPlayer = JsonConvert.DeserializeObject<Player>(serializedObject);
 
-	public IReadOnlyList<Player> ReadAll()
-	{
-		Directory.CreateDirectory(this.GetBaseDirectory());
+        if (jsonPlayer == null)
+            return null;
 
-		var files = Directory.GetFiles(this.GetBaseDirectory());
-		var players = new List<Player>();
+        var player = jsonPlayer.ToReal();
 
-		foreach (var file in files)
-			players.Add(this.ReadFromFile(file)!);
+        return player;
+    }
 
-		return players;
-	}
+    public IReadOnlyList<App.Models.Player> ReadAll()
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-	public void Delete(Guid id)
-	{
-		throw new NotImplementedException();
-	}
+        var files = Directory.GetFiles(this.GetBaseDirectory());
+        var players = new List<App.Models.Player>();
 
-	private string GetBaseDirectory()
-	{
-		return $"{Environment.CurrentDirectory}/Data/Players";
-	}
+        foreach (var file in files)
+        {
+            var player = this.ReadFromFile(file);
 
-	private string PlayerToFilepath(Player player)
-	{
-		return this.IdToFilepath(player.Id);
-	}
+            if (player == null)
+                continue;
 
-	private string IdToFilepath(Guid id)
-	{
-		return $"{this.GetBaseDirectory()}/{id}.json";
-	}
+            players.Add(player);
+        }
+
+        return players;
+    }
+
+    private string GetBaseDirectory()
+    {
+        return $"{Environment.CurrentDirectory}/Data/Players";
+    }
+
+    private string PlayerToFilepath(App.Models.Player player)
+    {
+        return this.IdToFilepath(player.Id);
+    }
+
+    private string IdToFilepath(Guid id)
+    {
+        return $"{this.GetBaseDirectory()}/{id}.json";
+    }
 }

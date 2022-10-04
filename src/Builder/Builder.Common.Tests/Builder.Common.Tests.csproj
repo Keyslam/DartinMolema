@@ -3,10 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <AssemblyName>App.Builder.Common.Tests</AssemblyName>
 
     <IsPackable>false</IsPackable>
-
-    <AssemblyName>App.Repository.Common.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,8 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LocalRepository\LocalRepository.csproj" />
-    <ProjectReference Include="..\Repository.Common\Repository.Common.csproj" />
+    <ProjectReference Include="..\Builder.Common\Builder.Common.csproj" />
   </ItemGroup>
 
 </Project>
