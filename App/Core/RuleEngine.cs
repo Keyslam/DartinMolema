@@ -1,7 +1,7 @@
 using App.Models;
 using App.Repository;
 
-namespace App;
+namespace App.Core;
 
 public class RuleEngine
 {
@@ -11,47 +11,28 @@ public class RuleEngine
 
     private Set? CurrentSet { get; set; }
     private Leg? CurrentLeg { get; set; }
+    public Player CurrentPlayer { get; set; }
 
     public List<Player> Players { get; }
 
     public uint SetsToWin
     {
         get => this.Match.SetsToWin;
-        set
-        {
-            this.Match.SetsToWin = value;
-            this.MatchRepository.Save(this.Match);
-        }
     }
 
     public uint LegsToWin
     {
         get => this.Match.LegsToWin;
-        set
-        {
-            this.Match.LegsToWin = value;
-            this.MatchRepository.Save(this.Match);
-        }
     }
 
     public uint ScoreToWin
     {
         get => this.Match.ScoreToWin;
-        set
-        {
-            this.Match.ScoreToWin = value;
-            this.MatchRepository.Save(this.Match);
-        }
     }
 
     public uint ThrowsPerTurn
     {
         get => this.Match.ThrowsPerTurn;
-        set
-        {
-            this.Match.ThrowsPerTurn = value;
-            this.MatchRepository.Save(this.Match);
-        }
     }
 
     public RuleEngine(Match match)
@@ -67,6 +48,7 @@ public class RuleEngine
             var player = PlayerRepository.Read(playerId)!;
             this.Players.Add(player);
         }
+        this.CurrentPlayer = this.Players[0];
 
         this.MatchRepository.Save(this.Match);
     }
@@ -98,7 +80,10 @@ public class RuleEngine
 
         this.CurrentLeg.Id = Guid.NewGuid();
         this.CurrentLeg.WinnerId = null;
-        this.CurrentLeg.Turns = new List<Turn>();
+        this.CurrentLeg.Turns = new Dictionary<Guid, List<Turn>>();
+
+        foreach (var player in this.Players)
+            this.CurrentLeg.Turns.Add(player.Id, new List<Turn>());
 
         this.CurrentSet.Legs.Add(this.CurrentLeg);
 
@@ -107,7 +92,9 @@ public class RuleEngine
 
     public void EndLeg()
     {
-
+        var indexOf = this.Players.IndexOf(this.CurrentPlayer);
+        var nextIndex = indexOf == this.Players.Count - 1 ? 0 : indexOf + 1;
+        this.CurrentPlayer = this.Players[nextIndex];
     }
 
     public bool PlayTurn(List<(ThrowKind throwKind, uint value)> throws)
@@ -132,18 +119,21 @@ public class RuleEngine
             turn.Throws.Add(throww);
         }
 
-        this.CurrentLeg.Turns.Add(turn);
+        var turns = this.CurrentLeg.Turns[this.CurrentPlayer.Id];
+        turns.Add(turn);
 
         this.MatchRepository.Save(this.Match);
 
         return true;
     }
 
-    public List<Turn> GetCurrentTurns()
+    public List<Turn> GetCurrentTurns(Guid playerId)
     {
         if (this.CurrentLeg == null)
             throw new InvalidOperationException();
 
-        return this.CurrentLeg.Turns;
+        var turns = this.CurrentLeg.Turns[playerId];
+
+        return turns;
     }
 }

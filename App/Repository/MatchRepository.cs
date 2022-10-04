@@ -5,37 +5,59 @@ namespace App.Repository;
 
 public class MatchRepository : IRepository<Match>
 {
-	public void Save(Match match)
-	{
-		var serializedObject = JsonConvert.SerializeObject(match);
-		var filepath = this.MatchToFilepath(match);
+    public void Save(Match match)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-		Directory.CreateDirectory(Path.GetDirectoryName(filepath)!);
-		File.WriteAllText(filepath, serializedObject);
-	}
+        var serializedObject = JsonConvert.SerializeObject(match);
+        var filepath = this.MatchToFilepath(match);
+        File.WriteAllText(filepath, serializedObject);
+    }
 
-	public Match? Read(Guid id)
-	{
-		var filepath = IdToFilepath(id);
+    public Match? Read(Guid id)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-		var serializedObject = File.ReadAllText(filepath);
-		var match = JsonConvert.DeserializeObject<Match>(serializedObject);
+        var filepath = IdToFilepath(id);
 
-		return match;
-	}
+        return ReadFromFile(filepath);
+    }
 
-	public void Delete(Guid id)
-	{
-		throw new NotImplementedException();
-	}
+    private Match? ReadFromFile(string filepath)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
 
-	private string MatchToFilepath(Match match)
-	{
-		return this.IdToFilepath(match.Id);
-	}
+        var serializedObject = File.ReadAllText(filepath);
+        var match = JsonConvert.DeserializeObject<Match>(serializedObject);
 
-	private string IdToFilepath(Guid id)
-	{
-		return $"{Environment.CurrentDirectory}/Data/Matches/{id}.json";
-	}
+        return match;
+    }
+
+    public IReadOnlyList<Match> ReadAll()
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
+
+        var files = Directory.GetFiles(this.GetBaseDirectory());
+        var matches = new List<Match>();
+
+        foreach (var file in files)
+            matches.Add(this.ReadFromFile(file)!);
+
+        return matches;
+    }
+
+    private string GetBaseDirectory()
+    {
+        return $"{Environment.CurrentDirectory}/Data/Matches";
+    }
+
+    private string MatchToFilepath(Match match)
+    {
+        return this.IdToFilepath(match.Id);
+    }
+
+    private string IdToFilepath(Guid id)
+    {
+        return $"{this.GetBaseDirectory()}/{id}.json";
+    }
 }

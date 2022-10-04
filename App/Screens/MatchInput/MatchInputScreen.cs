@@ -1,20 +1,22 @@
+using App.Core;
 using App.Models;
+using App.Screens.MatchInput;
 using ImGuiNET;
 
 namespace App.Screens;
 
-public class GameInput : IScreen
+public class MatchInputScreen : IScreen
 {
     private RuleEngine RuleEngine;
     private DartInput[] DartInputs;
 
     private bool modalOpen = false;
 
-    public GameInput(RuleEngine ruleEngine)
+    public MatchInputScreen(Match match)
     {
-        this.RuleEngine = ruleEngine;
+        this.RuleEngine = new RuleEngine(match);
 
-        this.DartInputs = new DartInput[ruleEngine.ThrowsPerTurn];
+        this.DartInputs = new DartInput[this.RuleEngine.ThrowsPerTurn];
         for (int i = 0; i < DartInputs.Length; i++)
             this.DartInputs[i] = new DartInput();
 
@@ -92,34 +94,42 @@ public class GameInput : IScreen
         ImGui.Separator();
         ImGui.Spacing();
 
-        if (ImGui.BeginTable("Player 1 table", (int)this.RuleEngine.ThrowsPerTurn + 2, ImGuiTableFlags.Borders))
+        for (int i = 0; i < this.RuleEngine.Players.Count; i++)
         {
-            ImGui.TableSetupColumn("Turn");
-            for (int i = 0; i < this.RuleEngine.ThrowsPerTurn; i++)
-                ImGui.TableSetupColumn($"Dart {i + 1}");
-            ImGui.TableSetupColumn($"Remaining");
-            ImGui.TableHeadersRow();
+            var player = this.RuleEngine.Players[i];
 
-            var turns = this.RuleEngine.GetCurrentTurns();
-            for (int i = 0; i < turns.Count; i++)
+            if (ImGui.BeginTable($"Player {i} table", (int)this.RuleEngine.ThrowsPerTurn + 2, ImGuiTableFlags.Borders))
             {
-                var turn = turns[i];
+                ImGui.TableSetupColumn("Turn");
+                for (int j = 0; j < this.RuleEngine.ThrowsPerTurn; j++)
+                    ImGui.TableSetupColumn($"Dart {j + 1}");
+                ImGui.TableSetupColumn($"Remaining");
+                ImGui.TableHeadersRow();
 
-                ImGui.TableNextColumn();
-                ImGui.Text($"Turn {i + 1}");
-
-                foreach (var throww in turn.Throws)
+                var turns = this.RuleEngine.GetCurrentTurns(player.Id);
+                for (int j = 0; j < turns.Count; j++)
                 {
+                    var turn = turns[j];
+
                     ImGui.TableNextColumn();
-                    ImGui.Text($"{throww.ThrownValue}");
+                    ImGui.Text($"Turn {j + 1}");
+
+                    foreach (var throww in turn.Throws)
+                    {
+                        ImGui.TableNextColumn();
+                        ImGui.Text($"{throww.ThrownValue}");
+                    }
+
+                    ImGui.TableNextColumn();
+                    ImGui.Text(this.RuleEngine.ScoreToWin.ToString());
                 }
 
-                ImGui.TableNextColumn();
-                ImGui.Text(this.RuleEngine.ScoreToWin.ToString());
+
+                ImGui.EndTable();
             }
 
-
-            ImGui.EndTable();
+            // if (i != this.RuleEngine.Players.Count - 1)
+            ImGui.SameLine();
         }
     }
 
