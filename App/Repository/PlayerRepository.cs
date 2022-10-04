@@ -34,7 +34,7 @@ public class PlayerRepository : IRepository<Player>
         return player;
     }
 
-    public List<Player> ReadAll()
+    public IReadOnlyList<Player> ReadAll()
     {
         Directory.CreateDirectory(this.GetBaseDirectory());
 

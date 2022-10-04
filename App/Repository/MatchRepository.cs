@@ -20,15 +20,30 @@ public class MatchRepository : IRepository<Match>
 
         var filepath = IdToFilepath(id);
 
+        return ReadFromFile(filepath);
+    }
+
+    private Match? ReadFromFile(string filepath)
+    {
+        Directory.CreateDirectory(this.GetBaseDirectory());
+
         var serializedObject = File.ReadAllText(filepath);
         var match = JsonConvert.DeserializeObject<Match>(serializedObject);
 
         return match;
     }
 
-    public void Delete(Guid id)
+    public IReadOnlyList<Match> ReadAll()
     {
-        throw new NotImplementedException();
+        Directory.CreateDirectory(this.GetBaseDirectory());
+
+        var files = Directory.GetFiles(this.GetBaseDirectory());
+        var matches = new List<Match>();
+
+        foreach (var file in files)
+            matches.Add(this.ReadFromFile(file)!);
+
+        return matches;
     }
 
     private string GetBaseDirectory()
