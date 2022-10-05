@@ -57,8 +57,13 @@ internal class DependencyContainer
         return new NewMatchScreen(this);
     }
 
-    public PlayerOverviewScreen MakeNewPlayerOverviewScreen(Player player)
+    public PlayerOverviewScreen MakePlayerOverviewScreen(Player player)
     {
         return new PlayerOverviewScreen(player, this);
+    }
+
+    public PlayersOverviewScreen MakePlayersOverviewScreen()
+    {
+        return new PlayersOverviewScreen(this);
     }
 }
