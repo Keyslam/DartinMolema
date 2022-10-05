@@ -28,6 +28,12 @@ public class MatchBuilder
         this.Result.Sets = new List<Set>();
     }
 
+    public MatchBuilder SetDate(DateTime date)
+    {
+        this.Result.Date = date;
+        return this;
+    }
+
     public MatchBuilder AddPlayer(Player player)
     {
         this.Result.Players.Add(player.Id);
@@ -37,6 +43,18 @@ public class MatchBuilder
     public MatchBuilder AddPlayer(Guid playerId)
     {
         this.Result.Players.Add(playerId);
+        return this;
+    }
+
+    public MatchBuilder RemovePlayer(Player player)
+    {
+        this.Result.Players.Remove(player.Id);
+        return this;
+    }
+
+    public MatchBuilder RemovePlayer(Guid playerId)
+    {
+        this.Result.Players.Remove(playerId);
         return this;
     }
 
