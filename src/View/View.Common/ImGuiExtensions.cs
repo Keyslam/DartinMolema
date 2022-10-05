@@ -19,4 +19,67 @@ public static class ImGuiExtensions
     {
         return ImGui.IsItemFocused() && ImGui.IsKeyPressed(ImGuiKey.Enter);
     }
+
+    public static void Spacing(int amount)
+    {
+        for (int i = 0; i < amount; i++)
+            ImGui.Spacing();
+    }
+
+    public static bool BeginDialogModal(string id)
+    {
+        bool open = true;
+
+        ImGui.SetNextWindowSize(new Vector2(400, 0));
+        ImGui.SetNextWindowPos(ImGui.GetWindowViewport().GetCenter(), ImGuiCond.Appearing, new Vector2(0.5f, 0.5f));
+        bool success = ImGui.BeginPopupModal(id, ref open, ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar);
+
+        if (success)
+        {
+            ImGui.Text(id);
+            ImGui.Separator();
+            ImGuiExtensions.Spacing(5);
+        }
+
+        return success;
+    }
+
+    public static void EndDialogModal(string cancelName, string confirmName, Action OnYes)
+    {
+        EndDialogModal(cancelName, confirmName, OnYes, () => { });
+    }
+
+    public static void EndDialogModal(string cancelName, string confirmName, Action OnYes, Action OnNo)
+    {
+        var buttonSize = 120;
+
+        ImGuiExtensions.Spacing(5);
+
+        if (ImGuiExtensions.Button(cancelName, new Vector2(buttonSize, 0)) || ImGui.IsKeyPressed(ImGuiKey.Escape))
+        {
+            OnNo();
+            ImGui.CloseCurrentPopup();
+        }
+
+        ImGui.SameLine(ImGui.GetWindowSize().X - buttonSize);
+
+        if (ImGui.IsWindowAppearing())
+            ImGui.SetKeyboardFocusHere();
+
+        if (ImGuiExtensions.Button(confirmName, new Vector2(buttonSize, 0)))
+        {
+            OnYes();
+            ImGui.CloseCurrentPopup();
+        }
+        ImGui.EndPopup();
+    }
+
+    public static void CenterText(string text)
+    {
+        var windowWidth = ImGui.GetWindowSize().X;
+        var textWidth = ImGui.CalcTextSize(text).X;
+
+        ImGui.SetCursorPosX((windowWidth - textWidth) * 0.5f);
+        ImGui.Text(text);
+    }
 }
