@@ -1,4 +1,4 @@
-using App.Core;
+using App.GameRuler;
 using App.Models;
 using App.Repository;
 

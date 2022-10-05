@@ -1,17 +1,40 @@
 using App.Models;
 using App.Repository;
 
-namespace App.Core;
+namespace App.GameRuler;
 
 public class RuleEngine
 {
+    public delegate void TurnPlayedHandler(Player player, Turn turn);
+    public event TurnPlayedHandler? TurnPlayed;
+
+    public class PlayerStatistic
+    {
+        public uint AveragePoints { get; set; }
+        public uint SetsWon { get; set; }
+        public uint LegsWon { get; set; }
+        public uint RemainingPoints { get; set; }
+        public uint Tripledarts { get; set; }
+
+        public PlayerStatistic(uint targetPoints)
+        {
+            this.AveragePoints = 0;
+            this.SetsWon = 0;
+            this.LegsWon = 0;
+            this.RemainingPoints = targetPoints;
+            this.Tripledarts = 0;
+        }
+    }
+
     private IMatchRepository MatchRepository { get; }
     private IPlayerRepository PlayerRepository { get; }
     private Match Match { get; }
 
     private Set? CurrentSet { get; set; }
     private Leg? CurrentLeg { get; set; }
+
     public Player CurrentPlayer { get; set; }
+    public Dictionary<Player, PlayerStatistic> PlayerStatistics { get; }
 
     public List<Player> Players { get; }
 
@@ -43,11 +66,16 @@ public class RuleEngine
         this.PlayerRepository = playerRepository;
 
         this.Players = new List<Player>();
+        this.PlayerStatistics = new Dictionary<Player, PlayerStatistic>();
+
         foreach (var playerId in this.Match.Players)
         {
             var player = PlayerRepository.Read(playerId)!;
             this.Players.Add(player);
+
+            this.PlayerStatistics.Add(player, new PlayerStatistic(match.ScoreToWin));
         }
+
         this.CurrentPlayer = this.Players[0];
 
         this.MatchRepository.Save(this.Match);
@@ -107,6 +135,8 @@ public class RuleEngine
         turn.Id = Guid.NewGuid();
         turn.Score = 0;
         turn.Throws = new List<Throw>();
+
+        // TurnPlayed?.Invoke(player, throww);
 
         foreach (var throwData in throws)
         {

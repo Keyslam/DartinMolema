@@ -1,9 +1,11 @@
+using System.Diagnostics;
 using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using ImGuiNET;
+using App.Models;
 
 namespace App.View;
 
@@ -15,13 +17,15 @@ public class AppWindow
     GL gl;
     ImGuiController imGuiController;
     ScreenNavigator screenNavigator;
+
+    ImFontPtr FontRoboto { get; set; }
 #pragma warning restore 8618
 
     public void Run()
     {
         var windowOptions = WindowOptions.Default;
         windowOptions.Size = new Vector2D<int>(1920, 1080);
-        windowOptions.Title = "DartApp";
+        windowOptions.Title = "Dartin Molema";
 
         window = Window.Create(windowOptions);
         window.Load += OnWindowLoad;
@@ -41,14 +45,24 @@ public class AppWindow
             var dependencyContainer = new DependencyContainer();
             this.screenNavigator = dependencyContainer.GetScreenNavigator();
 
-
             // var matchFactory = new MatchFactory();
             // var match = matchFactory.CreateDefault();
             // var ruleEngine = new RuleEngine(match);
             // this.screenNavigator.Push(new GameInput(ruleEngine));
 
-            // var playerRepository = new PlayerRepository();
+            // var playerRepository = dependencyContainer.GetPlayerRepository();
 
+            // foreach (var name in names)
+            // {
+            //     var playerA = new Player();
+            //     playerA.Id = Guid.NewGuid();
+            //     playerA.FullName = name;
+            //     playerA.PlayedGames = new List<Guid>();
+            //     playerA.Lossess = 0;
+            //     playerA.Wins = 0;
+
+            //     playerRepository.Save(playerA);
+            // }
             // var playerA = new Player();
             // playerA.Id = Guid.NewGuid();
             // playerA.FullName = "Jane Doe";
@@ -56,16 +70,15 @@ public class AppWindow
             // playerA.Lossess = 0;
             // playerA.Wins = 0;
 
-            // playerRepository.Save(playerA);
 
             // var playerB = new Player();
             // playerB.Id = Guid.NewGuid();
-            // playerB.FullName = "John Doe";
+            // playerB.FullName = "Dennis Dropjes";
             // playerB.PlayedGames = new List<Guid>();
             // playerB.Lossess = 0;
             // playerB.Wins = 0;
 
-            // playerRepository.Save(playerB);
+            // dependencyContainer.GetPlayerRepository().Save(playerB);
 
             this.screenNavigator.Push(dependencyContainer.MakeMainScreen());
         }
@@ -78,11 +91,6 @@ public class AppWindow
 
             if (ImGui.Begin("Test", ImGuiWindowFlags.NoTitleBar))
             {
-                ImGui.Text("Dartin Molema");
-                ImGui.Spacing();
-                ImGui.Separator();
-                ImGui.Spacing();
-
                 var topScreen = this.screenNavigator.GetTopScreen();
                 topScreen.Update();
             }
