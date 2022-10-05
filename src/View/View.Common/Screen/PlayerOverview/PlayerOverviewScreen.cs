@@ -13,6 +13,6 @@ internal class PlayerOverviewScreen : Screen
     public override void Update()
     {
         if (ImGuiExtensions.Button("Back"))
-            this.ScreenNavigator.PopToRoot();
+            this.ScreenNavigator.Pop();
     }
 }

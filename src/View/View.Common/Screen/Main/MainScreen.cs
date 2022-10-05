@@ -15,7 +15,12 @@ internal class MainScreen : Screen
         if (ImGuiExtensions.Button("New Game"))
             this.ScreenNavigator.Push(this.DependencyContainer.MakeNewMatchScreen());
 
-        ImGui.Button("Player Overview");
+        if (ImGuiExtensions.Button("Players Overview"))
+            this.ScreenNavigator.Push(this.DependencyContainer.MakePlayersOverviewScreen());
+
+        if (ImGuiExtensions.Button("Matches Overview"))
+            this.ScreenNavigator.Push(this.DependencyContainer.MakeMatchesOverviewScreen());
+
         ImGui.Button("Match Overview");
         ImGui.Button("Import Match");
     }
