@@ -52,6 +52,11 @@ internal class DependencyContainer
         return new MatchOverviewScreen(match, this);
     }
 
+    public MatchesOverviewScreen MakeMatchesOverviewScreen()
+    {
+        return new MatchesOverviewScreen(this);
+    }
+
     public NewMatchScreen MakeNewMatchScreen()
     {
         return new NewMatchScreen(this);
