@@ -16,7 +16,7 @@ internal class Match
     public List<Guid> Players { get; set; }
 
     [JsonProperty("winner_id")]
-    public Guid? WinnerId { get; set; }
+    public Guid WinnerId { get; set; }
 
     [JsonProperty("sets_to_win")]
     public uint SetsToWin { get; set; }

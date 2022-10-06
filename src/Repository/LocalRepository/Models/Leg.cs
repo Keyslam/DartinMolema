@@ -10,7 +10,7 @@ internal class Leg
     public Guid Id { get; set; }
 
     [JsonProperty("winner_id")]
-    public Guid? WinnerId { get; set; }
+    public Guid WinnerId { get; set; }
 
     [JsonProperty("turns")]
     public Dictionary<Guid, List<Turn>> Turns { get; set; }

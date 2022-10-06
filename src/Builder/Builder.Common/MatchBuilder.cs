@@ -20,7 +20,7 @@ public class MatchBuilder
         this.Result.Id = Guid.NewGuid();
         this.Result.Date = DateTime.Now;
         this.Result.Players = new List<Guid>();
-        this.Result.WinnerId = null;
+        this.Result.WinnerId = Guid.Empty;
         this.Result.SetsToWin = 5;
         this.Result.LegsToWin = 5;
         this.Result.ScoreToWin = 501;

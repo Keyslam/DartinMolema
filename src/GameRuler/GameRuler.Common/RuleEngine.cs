@@ -79,7 +79,7 @@ public class RuleEngine
         this.CurrentLeg = new Leg();
 
         this.CurrentLeg.Id = Guid.NewGuid();
-        this.CurrentLeg.WinnerId = null;
+        this.CurrentLeg.WinnerId = Guid.Empty;
         this.CurrentLeg.Turns = new Dictionary<Guid, List<Turn>>();
 
         foreach (var player in this.Players)
