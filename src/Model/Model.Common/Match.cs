@@ -5,12 +5,14 @@ namespace App.Models;
 public class Match
 {
     public Guid Id { get; set; }
+    public string Name { get; set; }
     public DateTime Date { get; set; }
     public List<Guid> Players { get; set; }
-    public Guid? WinnerId { get; set; }
-    public uint SetsToWin { get; set; }
-    public uint LegsToWin { get; set; }
-    public uint ScoreToWin { get; set; }
-    public uint ThrowsPerTurn { get; set; }
+    public Guid WinnerId { get; set; }
+    public int SetsToWin { get; set; }
+    public int LegsToWin { get; set; }
+    public int ScoreToWin { get; set; }
+    public int ThrowsPerTurn { get; set; }
     public List<Set> Sets { get; set; }
+    public Dictionary<Guid, PlayerMatchStatistic> Statistics { get; set; }
 }

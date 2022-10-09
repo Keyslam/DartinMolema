@@ -22,8 +22,8 @@ internal class MatchInputScreen : Screen
         for (int i = 0; i < DartInputs.Length; i++)
             this.DartInputs[i] = new DartInput();
 
-        this.RuleEngine.StartSet();
-        this.RuleEngine.StartLeg();
+        this.RuleEngine.StartNewSet();
+        this.RuleEngine.StartNewLeg();
     }
 
     public override void Update()
@@ -108,25 +108,27 @@ internal class MatchInputScreen : Screen
 
             foreach (var player in RuleEngine.Players)
             {
-                var statistic = RuleEngine.PlayerStatistics[player];
+                var matchStatistic = RuleEngine.GetPlayerMatchStatistic(player);
+                var setStatistic = RuleEngine.GetPlayerSetStatistic(player);
+                var legStatistic = RuleEngine.GetPlayerLegStatistic(player);
 
                 ImGui.TableNextColumn();
                 ImGui.Text(player.FullName);
 
                 ImGui.TableNextColumn();
-                ImGui.Text(statistic.AveragePoints.ToString());
+                ImGui.Text("0");
 
                 ImGui.TableNextColumn();
-                ImGui.Text(statistic.SetsWon.ToString());
+                ImGui.Text(matchStatistic.SetsWon.ToString());
 
                 ImGui.TableNextColumn();
-                ImGui.Text(statistic.LegsWon.ToString());
+                ImGui.Text(setStatistic.LegsWon.ToString());
 
                 ImGui.TableNextColumn();
-                ImGui.Text(statistic.RemainingPoints.ToString());
+                ImGui.Text(legStatistic.RemainingPoints.ToString());
 
                 ImGui.TableNextColumn();
-                ImGui.Text(statistic.Tripledarts.ToString());
+                ImGui.Text(matchStatistic.OneEighties.ToString());
             }
 
             ImGui.EndTable();
@@ -155,7 +157,7 @@ internal class MatchInputScreen : Screen
 
         if (ImGuiExtensions.Button("Enter"))
         {
-            var throws = new List<(ThrowKind throwKind, uint value)>();
+            var throws = new List<(ThrowKind throwKind, int value)>();
             foreach (var dartInput in DartInputs)
                 throws.Add(new(dartInput.ThrowKind, dartInput.Value));
 
@@ -182,7 +184,7 @@ internal class MatchInputScreen : Screen
             ImGui.TableSetupColumn($"Remaining");
             ImGui.TableHeadersRow();
 
-            var turns = this.RuleEngine.GetCurrentTurns(player.Id);
+            var turns = this.RuleEngine.GetPlayerTurns(player.Id);
             for (int i = 0; i < Math.Max(10, turns.Count); i++)
             {
                 var turn = i < turns.Count ? turns[i] : null;
@@ -192,15 +194,15 @@ internal class MatchInputScreen : Screen
 
                 for (int j = 0; j < RuleEngine.ThrowsPerTurn; j++)
                 {
-                    Throw? throww = null;
+                    Throw? @throw = null;
 
                     if (turn != null)
-                        throww = turn.Throws[j];
+                        @throw = turn.Throws[j];
 
                     ImGui.TableNextColumn();
 
-                    if (throww != null)
-                        ImGui.Text(throww.ThrownValue.ToString());
+                    if (@throw != null)
+                        ImGui.Text(@throw.ThrownValue.ToString());
                 }
 
                 ImGui.TableNextColumn();

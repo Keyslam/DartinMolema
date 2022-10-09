@@ -50,19 +50,29 @@ public class AppWindow
             // var ruleEngine = new RuleEngine(match);
             // this.screenNavigator.Push(new GameInput(ruleEngine));
 
-            // var playerRepository = dependencyContainer.GetPlayerRepository();
+            var playerRepository = dependencyContainer.GetPlayerRepository();
 
-            // foreach (var name in names)
-            // {
-            //     var playerA = new Player();
-            //     playerA.Id = Guid.NewGuid();
-            //     playerA.FullName = name;
-            //     playerA.PlayedGames = new List<Guid>();
-            //     playerA.Lossess = 0;
-            //     playerA.Wins = 0;
+            var names = new List<string>() {
+                "Dennis Doosjes",
+                "Bart Bakker"
+            };
+            foreach (var name in names)
+            {
+                var playerA = new Player();
+                playerA.Id = Guid.NewGuid();
+                playerA.FullName = name;
+                playerA.PlayedGames = new List<Guid>();
+                playerA.WonGames = new List<Guid>();
+                playerA.LostGames = new List<Guid>();
+                playerA.Statistic = new PlayerStatistic()
+                {
+                    AverageTurnScore = 0,
+                    Ninedarters = 0,
+                    OneEighties = 0,
+                };
 
-            //     playerRepository.Save(playerA);
-            // }
+                playerRepository.Save(playerA);
+            }
             // var playerA = new Player();
             // playerA.Id = Guid.NewGuid();
             // playerA.FullName = "Jane Doe";
