@@ -11,243 +11,237 @@ namespace App.View;
 
 internal class MatchInputScreen : Screen
 {
-    private RuleEngine RuleEngine { get; }
-    private DartInput[] DartInputs { get; }
+	private RuleEngine RuleEngine { get; }
+	private DartInput[] DartInputs { get; }
 
-    public MatchInputScreen(Match match, DependencyContainer dependencyContainer) : base(dependencyContainer)
-    {
-        this.RuleEngine = this.DependencyContainer.MakeRuleEngine(match);
+	public MatchInputScreen(Match match, DependencyContainer dependencyContainer) : base(dependencyContainer)
+	{
+		this.RuleEngine = this.DependencyContainer.MakeRuleEngine(match);
 
-        this.DartInputs = new DartInput[this.RuleEngine.ThrowsPerTurn];
-        for (int i = 0; i < DartInputs.Length; i++)
-            this.DartInputs[i] = new DartInput();
+		this.DartInputs = new DartInput[this.RuleEngine.ThrowsPerTurn];
+		for (int i = 0; i < DartInputs.Length; i++)
+			this.DartInputs[i] = new DartInput();
 
-        this.RuleEngine.StartNewSet();
-        this.RuleEngine.StartNewLeg();
-    }
+		this.RuleEngine.StartNewSet();
+		this.RuleEngine.StartNewLeg();
+	}
 
-    public override void Update()
-    {
-        Layout();
-    }
+	public override void Update()
+	{
+		Layout();
+	}
 
-    private void Layout()
-    {
-        Header();
-        ImGuiExtensions.Spacing(5);
+	private void Layout()
+	{
+		Header();
+		ImGuiExtensions.Spacing(5);
 
-        ImGui.Columns(2);
+		ImGui.Columns(2);
 
-        MatchInfo();
-        ImGuiExtensions.Spacing(3);
+		MatchInfo();
+		ImGuiExtensions.Spacing(3);
 
-        MatchStatistics();
-        ImGuiExtensions.Spacing(3);
+		MatchStatistics();
+		ImGuiExtensions.Spacing(3);
 
-        CurrentlyPlaying();
-        ImGuiExtensions.Spacing(3);
+		CurrentlyPlaying();
+		ImGuiExtensions.Spacing(3);
 
-        DartInputFields();
+		DartInputFields();
 
-        ImGui.NextColumn();
+		ImGui.NextColumn();
 
-        foreach (var player in RuleEngine.Players)
-        {
-            PlayerThrows(player);
-            ImGui.Spacing();
-        }
+		foreach (var player in RuleEngine.Players)
+		{
+			PlayerThrows(player);
+			ImGui.Spacing();
+		}
 
-        RemainingPointsModal();
-        EndOfLegModal();
-    }
+		RemainingPointsModal();
+		EndOfLegModal();
+	}
 
-    private void Header()
-    {
-        var stringBuilder = new StringBuilder();
-        stringBuilder.Append("Match Input : ");
-        for (int i = 0; i < RuleEngine.Players.Count; i++)
-        {
-            var player = RuleEngine.Players[i];
+	private void Header()
+	{
+		var stringBuilder = new StringBuilder();
+		stringBuilder.Append("Match Input : ");
+		for (int i = 0; i < RuleEngine.Players.Count; i++)
+		{
+			var player = RuleEngine.Players[i];
 
-            if (i != 0)
-                stringBuilder.Append(" vs ");
+			if (i != 0)
+				stringBuilder.Append(" vs ");
 
-            stringBuilder.Append(player.FullName);
-        }
+			stringBuilder.Append(player.FullName);
+		}
 
-        ImGui.Text(stringBuilder.ToString());
-    }
+		ImGui.Text(stringBuilder.ToString());
+	}
 
 
-    private void MatchInfo()
-    {
-        ImGui.Text($"First to {this.RuleEngine.SetsToWin} sets wins the match");
-        ImGui.Text($"First to {this.RuleEngine.LegsToWin} legs wins the set");
-    }
+	private void MatchInfo()
+	{
+		ImGui.Text($"First to {this.RuleEngine.SetsToWin} sets wins the match");
+		ImGui.Text($"First to {this.RuleEngine.LegsToWin} legs wins the set");
+	}
 
-    private int SelectedIndex = 0;
+	private int SelectedIndex = 0;
 
-    private void MatchStatistics()
-    {
-        for (int i = 0; i < 10; i++)
-        {
-            if (ImGui.Selectable(i.ToString(), i == SelectedIndex))
-                SelectedIndex = i;
-        }
+	private void MatchStatistics()
+	{
+		ImGui.PushAllowKeyboardFocus(false);
+		if (ImGui.BeginTable($"Match Statistics", 6, ImGuiTableFlags.Borders))
+		{
+			ImGui.TableSetupColumn("Name");
+			ImGui.TableSetupColumn("Average");
+			ImGui.TableSetupColumn("Sets");
+			ImGui.TableSetupColumn("Legs");
+			ImGui.TableSetupColumn("Remaining points");
+			ImGui.TableSetupColumn("180's");
+			ImGui.TableHeadersRow();
 
-        ImGui.PushAllowKeyboardFocus(false);
-        if (ImGui.BeginTable($"Match Statistics", 6, ImGuiTableFlags.Borders))
-        {
-            ImGui.TableSetupColumn("Name");
-            ImGui.TableSetupColumn("Average");
-            ImGui.TableSetupColumn("Sets");
-            ImGui.TableSetupColumn("Legs");
-            ImGui.TableSetupColumn("Remaining points");
-            ImGui.TableSetupColumn("180's");
-            ImGui.TableHeadersRow();
+			foreach (var player in RuleEngine.Players)
+			{
+				var matchStatistic = RuleEngine.GetPlayerMatchStatistic(player);
+				var setStatistic = RuleEngine.GetPlayerSetStatistic(player);
+				var legStatistic = RuleEngine.GetPlayerLegStatistic(player);
 
-            foreach (var player in RuleEngine.Players)
-            {
-                var matchStatistic = RuleEngine.GetPlayerMatchStatistic(player);
-                var setStatistic = RuleEngine.GetPlayerSetStatistic(player);
-                var legStatistic = RuleEngine.GetPlayerLegStatistic(player);
+				ImGui.TableNextColumn();
+				ImGui.Text(player.FullName);
 
-                ImGui.TableNextColumn();
-                ImGui.Text(player.FullName);
+				ImGui.TableNextColumn();
+				ImGui.Text("0");
 
-                ImGui.TableNextColumn();
-                ImGui.Text("0");
+				ImGui.TableNextColumn();
+				ImGui.Text(matchStatistic.SetsWon.ToString());
 
-                ImGui.TableNextColumn();
-                ImGui.Text(matchStatistic.SetsWon.ToString());
+				ImGui.TableNextColumn();
+				ImGui.Text(setStatistic.LegsWon.ToString());
 
-                ImGui.TableNextColumn();
-                ImGui.Text(setStatistic.LegsWon.ToString());
+				ImGui.TableNextColumn();
+				ImGui.Text(legStatistic.RemainingPoints.ToString());
 
-                ImGui.TableNextColumn();
-                ImGui.Text(legStatistic.RemainingPoints.ToString());
+				ImGui.TableNextColumn();
+				ImGui.Text(matchStatistic.OneEighties.ToString());
+			}
 
-                ImGui.TableNextColumn();
-                ImGui.Text(matchStatistic.OneEighties.ToString());
-            }
+			ImGui.EndTable();
+		}
+		ImGui.PopAllowKeyboardFocus();
+	}
 
-            ImGui.EndTable();
-        }
-        ImGui.PopAllowKeyboardFocus();
-    }
+	private void CurrentlyPlaying()
+	{
+		ImGui.Text($"Currently playing: {RuleEngine.CurrentPlayer.FullName}");
+	}
 
-    private void CurrentlyPlaying()
-    {
-        ImGui.Text($"Currently playing: {RuleEngine.CurrentPlayer.FullName}");
-    }
+	private void DartInputFields()
+	{
+		for (int i = 0; i < this.RuleEngine.ThrowsPerTurn; i++)
+		{
+			var dartInput = DartInputs[i];
 
-    private void DartInputFields()
-    {
-        for (int i = 0; i < this.RuleEngine.ThrowsPerTurn; i++)
-        {
-            var dartInput = DartInputs[i];
+			var input = dartInput.Input;
 
-            var input = dartInput.Input;
+			if (ImGui.InputText($"Dart {i + 1}", ref input, 3))
+				dartInput.Input = input;
+		}
 
-            if (ImGui.InputText($"Dart {i + 1}", ref input, 3))
-                dartInput.Input = input;
-        }
+		ImGui.Spacing();
 
-        ImGui.Spacing();
+		if (ImGuiExtensions.Button("Enter"))
+		{
+			var throws = new List<(ThrowKind throwKind, int value)>();
+			foreach (var dartInput in DartInputs)
+				throws.Add(new(dartInput.ThrowKind, dartInput.Value));
 
-        if (ImGuiExtensions.Button("Enter"))
-        {
-            var throws = new List<(ThrowKind throwKind, int value)>();
-            foreach (var dartInput in DartInputs)
-                throws.Add(new(dartInput.ThrowKind, dartInput.Value));
+			this.RuleEngine.PlayTurn(throws);
 
-            this.RuleEngine.PlayTurn(throws);
+			ImGui.OpenPopup("Remaining points");
 
-            ImGui.OpenPopup("Remaining points");
+			for (int i = 0; i < DartInputs.Length; i++)
+				this.DartInputs[i] = new DartInput();
+		}
+		ImGui.SameLine();
+	}
 
-            for (int i = 0; i < DartInputs.Length; i++)
-                this.DartInputs[i] = new DartInput();
-        }
-        ImGui.SameLine();
-    }
+	private void PlayerThrows(Player player)
+	{
+		ImGui.Text($"{player.FullName} Throws");
+		ImGuiExtensions.Spacing(1);
 
-    private void PlayerThrows(Player player)
-    {
-        ImGui.Text($"{player.FullName} Throws");
-        ImGuiExtensions.Spacing(1);
+		if (ImGui.BeginTable($"{player.FullName} Throws", (int)this.RuleEngine.ThrowsPerTurn + 2, ImGuiTableFlags.Borders))
+		{
+			ImGui.TableSetupColumn("Turn");
+			for (int i = 0; i < this.RuleEngine.ThrowsPerTurn; i++)
+				ImGui.TableSetupColumn($"Dart {i + 1}");
+			ImGui.TableSetupColumn($"Remaining");
+			ImGui.TableHeadersRow();
 
-        if (ImGui.BeginTable($"{player.FullName} Throws", (int)this.RuleEngine.ThrowsPerTurn + 2, ImGuiTableFlags.Borders))
-        {
-            ImGui.TableSetupColumn("Turn");
-            for (int i = 0; i < this.RuleEngine.ThrowsPerTurn; i++)
-                ImGui.TableSetupColumn($"Dart {i + 1}");
-            ImGui.TableSetupColumn($"Remaining");
-            ImGui.TableHeadersRow();
+			var turns = this.RuleEngine.GetPlayerTurns(player.Id);
+			for (int i = 0; i < Math.Max(10, turns.Count); i++)
+			{
+				var turn = i < turns.Count ? turns[i] : null;
 
-            var turns = this.RuleEngine.GetPlayerTurns(player.Id);
-            for (int i = 0; i < Math.Max(10, turns.Count); i++)
-            {
-                var turn = i < turns.Count ? turns[i] : null;
+				ImGui.TableNextColumn();
+				ImGui.Text($"Turn {i + 1}");
 
-                ImGui.TableNextColumn();
-                ImGui.Text($"Turn {i + 1}");
+				for (int j = 0; j < RuleEngine.ThrowsPerTurn; j++)
+				{
+					Throw? @throw = null;
 
-                for (int j = 0; j < RuleEngine.ThrowsPerTurn; j++)
-                {
-                    Throw? @throw = null;
+					if (turn != null)
+						@throw = turn.Throws[j];
 
-                    if (turn != null)
-                        @throw = turn.Throws[j];
+					ImGui.TableNextColumn();
 
-                    ImGui.TableNextColumn();
+					if (@throw != null)
+						ImGui.Text(@throw.ThrownValue.ToString());
+				}
 
-                    if (@throw != null)
-                        ImGui.Text(@throw.ThrownValue.ToString());
-                }
+				ImGui.TableNextColumn();
+				if (turn != null)
+					ImGui.Text(this.RuleEngine.ScoreToWin.ToString());
+			}
 
-                ImGui.TableNextColumn();
-                if (turn != null)
-                    ImGui.Text(this.RuleEngine.ScoreToWin.ToString());
-            }
+			ImGui.EndTable();
+		}
+	}
 
-            ImGui.EndTable();
-        }
-    }
+	private void RemainingPointsModal()
+	{
+		if (ImGuiExtensions.BeginDialogModal("Remaining points"))
+		{
 
-    private void RemainingPointsModal()
-    {
-        if (ImGuiExtensions.BeginDialogModal("Remaining points"))
-        {
+			ImGuiExtensions.CenterText($"The remaining points after this turn is TODO.");
+			ImGuiExtensions.CenterText("Is this correct?");
 
-            ImGuiExtensions.CenterText($"The remaining points after this turn is TODO.");
-            ImGuiExtensions.CenterText("Is this correct?");
+			ImGuiExtensions.EndDialogModal("No", "Yes", () =>
+			{
 
-            ImGuiExtensions.EndDialogModal("No", "Yes", () =>
-            {
+			}, () =>
+			{
 
-            }, () =>
-            {
+			});
+		}
 
-            });
-        }
+	}
 
-    }
+	private void EndOfLegModal()
+	{
+		if (ImGuiExtensions.BeginDialogModal("End of turn"))
+		{
+			ImGuiExtensions.CenterText("This turn ends the leg.");
+			ImGuiExtensions.CenterText($"The winner is TODO");
+			ImGuiExtensions.CenterText("Is this correct?");
 
-    private void EndOfLegModal()
-    {
-        if (ImGuiExtensions.BeginDialogModal("End of turn"))
-        {
-            ImGuiExtensions.CenterText("This turn ends the leg.");
-            ImGuiExtensions.CenterText($"The winner is TODO");
-            ImGuiExtensions.CenterText("Is this correct?");
+			ImGuiExtensions.EndDialogModal("No", "Yes", () =>
+			{
 
-            ImGuiExtensions.EndDialogModal("No", "Yes", () =>
-            {
+			}, () =>
+			{
 
-            }, () =>
-            {
-
-            });
-        }
-    }
+			});
+		}
+	}
 }
