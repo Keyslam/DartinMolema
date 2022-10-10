@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "watch": "dotnet watch --project src/Core/Core.Common",
+        "start": "dotnet run --project src/Core/Core.Common",
+        "test": "dotnet test"
+    }
+}
