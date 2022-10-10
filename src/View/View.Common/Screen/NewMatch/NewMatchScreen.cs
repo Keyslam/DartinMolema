@@ -72,6 +72,9 @@ internal class NewMatchScreen : Screen
             this.playerName = regex.Replace(this.playerName.Trim(), " ");
             this.playerName = Regex.Replace(this.playerName, @"^(?<cap>\w)|\b(?<cap>\w)(?=\w*$)", m => m.Groups["cap"].Value.ToUpper());
 
+            if (ImGui.IsKeyPressed(ImGuiKey.Escape))
+                ImGui.CloseCurrentPopup();
+
             bool nameInvalid = String.IsNullOrEmpty(this.playerName) || this.players.ToList().Any(x => x.FullName.ToLower() == this.playerName.ToLower());
 
             if (nameInvalid)
@@ -219,6 +222,8 @@ internal class NewMatchScreen : Screen
         if (ImGui.BeginPopupModal("Date Invalid", ref open, ImGuiWindowFlags.AlwaysAutoResize))
         {
             ImGui.Text("Date is not valid");
+            if (ImGui.IsKeyPressed(ImGuiKey.Escape))
+                ImGui.CloseCurrentPopup();
             ImGui.EndPopup();
         }
     }
