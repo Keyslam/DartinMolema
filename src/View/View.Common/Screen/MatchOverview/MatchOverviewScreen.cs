@@ -233,14 +233,27 @@ internal class MatchOverviewScreen : Screen
 
         ImGui.PushStyleColor(ImGuiCol.PlotHistogram, new System.Numerics.Vector4(0f, 0f, 1f, 1f));
 
-        var values2 = PlayerBHistogramDatas[0];
-        ImGui.PlotHistogram("##playerBHistogram", ref PlayerBHistogramDatas[this.SelectedSet][0], PlayerBHistogramDatas[this.SelectedSet].Length, 0, "", 0, MaxTurnScore, new Vector2(width - DiagramOffset, DiagramHeight));
+        ImGui.PlotHistogram("##playerBHistogram", ref PlayerBHistogramDatas[this.SelectedSet][0], PlayerBHistogramDatas[this.SelectedSet].Length, 0, "Average turn score per leg (score x leg)", 0, MaxTurnScore, new Vector2(width - DiagramOffset, DiagramHeight));
 
         ImGui.PopStyleColor(3);
 
         ImGui.EndDisabled();
 
+        // Horizontal labels
+        var numberOfLegs = this.Match.Sets![this.SelectedSet].Legs.Count();
+        for (int i = 0; i < numberOfLegs; i++)
+        {
+            var horLabel = $"{i + 1}";
+            var labelWidth = ImGui.CalcTextSize(horLabel).X;
 
+            var horStepSize = (width - DiagramOffset) / PlayerAHistogramDatas[this.SelectedSet].Length;
+
+            // Offset of first bar from start (4), every 3 bars there should be a new label, and we should skip 1 bar (i * 3 + 1), center text (labelWidth / 2)
+            ImGui.SetCursorPos(currentPos + new Vector2(DiagramOffset + 4f + horStepSize * (i * 3 + 1) - labelWidth / 2f - i * 2, DiagramHeight + 2f));
+            ImGui.Text(horLabel);
+        }
+
+        // Vertical labels
         for (int i = 0; i < MaxTurnScore / ScoreStepSize + 1; i++)
         {
             ImGui.SetCursorPos(currentPos + new Vector2(0, (DiagramHeight / (MaxTurnScore / ScoreStepSize)) * i - (VerticalLabelHeight / 2)));
