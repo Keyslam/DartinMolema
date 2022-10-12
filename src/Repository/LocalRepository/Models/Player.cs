@@ -1,6 +1,5 @@
 #pragma warning disable 8618
 
-using App.Models;
 using Newtonsoft.Json;
 
 namespace App.Repository.LocalRepository.Models;
@@ -34,7 +33,7 @@ internal class Player
         this.PlayedGames = player.PlayedGames;
         this.WonGames = player.WonGames;
         this.LostGames = player.LostGames;
-        this.Statistic = player.Statistic;
+        this.Statistic = new PlayerStatistic(player.Statistic);
     }
 
     public App.Models.Player ToReal()
@@ -46,7 +45,7 @@ internal class Player
         player.PlayedGames = this.PlayedGames;
         player.WonGames = this.WonGames;
         player.LostGames = this.LostGames;
-        player.Statistic = this.Statistic;
+        player.Statistic = this.Statistic.ToReal();
 
         return player;
     }

@@ -1,6 +1,5 @@
 #pragma warning disable 8618
 
-using App.Models;
 using Newtonsoft.Json;
 
 namespace App.Repository.LocalRepository.Models;
@@ -17,7 +16,7 @@ internal class Throw
     public int AssignedValue { get; set; }
 
     [JsonProperty("kind")]
-    public ThrowKind Kind { get; set; }
+    public App.Models.ThrowKind Kind { get; set; }
 
     public Throw() { }
 

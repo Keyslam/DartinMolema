@@ -62,7 +62,6 @@ public class RuleEngine
         this.CurrentPlayer = this.Players[0];
 
         this.StartNewSet();
-        this.StartNewLeg();
 
         this.MatchRepository.Save(this.Match);
     }
@@ -92,6 +91,8 @@ public class RuleEngine
 
         this.Match.Sets.Add(this.CurrentSet);
 
+        this.StartNewLeg();
+
         this.MatchRepository.Save(this.Match);
     }
 
@@ -115,7 +116,7 @@ public class RuleEngine
         this.CurrentLeg = new Leg()
         {
             Id = Guid.NewGuid(),
-            WinnerId = Guid.NewGuid(),
+            WinnerId = Guid.Empty,
             Turns = turns,
             Statistics = statistics,
         };
@@ -188,16 +189,19 @@ public class RuleEngine
 
         legStatistic.RemainingPoints = newRemainingPoints;
         legStatistic.PlayedTurns += 1;
+        CurrentPlayer.Statistic.AverageTurnScore = CalculateAverageIteratively(CurrentPlayer.Statistic.AverageTurnScore, turnScore, CurrentPlayer.Statistic.PlayedTurns);
+        CurrentPlayer.Statistic.PlayedTurns++;
 
         var didMatchEnd = false;
         if (newRemainingPoints == 0)
             didMatchEnd = EndLeg();
 
+        this.MatchRepository.Save(this.Match);
+        this.PlayerRepository.Save(this.CurrentPlayer);
+
         var indexOf = this.Players.IndexOf(this.CurrentPlayer);
         var nextIndex = indexOf == this.Players.Count - 1 ? 0 : indexOf + 1;
         this.CurrentPlayer = this.Players[nextIndex];
-
-        this.MatchRepository.Save(this.Match);
 
         return didMatchEnd;
     }
@@ -254,6 +258,8 @@ public class RuleEngine
 
     private bool EndLeg()
     {
+        CurrentLeg.WinnerId = CurrentPlayer.Id;
+
         foreach (var player in this.Players)
         {
             var isWinningPlayer = player == this.CurrentPlayer;
@@ -282,6 +288,8 @@ public class RuleEngine
 
     private bool EndSet()
     {
+        CurrentSet.WinnerId = CurrentPlayer.Id;
+
         foreach (var player in this.Players)
         {
             var isWinningPlayer = player == this.CurrentPlayer;
@@ -334,6 +342,7 @@ public class RuleEngine
             legStatistic.OneEighties += 1;
             setStatistic.OneEighties += 1;
             matchStatistic.OneEighties += 1;
+            CurrentPlayer.Statistic.OneEighties++;
         }
 
         var IsNineDarter = newRemainingPoints == 0 && legStatistic.PlayedTurns == 3;
@@ -342,6 +351,7 @@ public class RuleEngine
             legStatistic.IsNineDarter = true;
             setStatistic.Ninedarters += 1;
             matchStatistic.Ninedarters += 1;
+            CurrentPlayer.Statistic.Ninedarters++;
         }
     }
 }
