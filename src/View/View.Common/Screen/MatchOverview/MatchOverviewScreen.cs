@@ -20,6 +20,15 @@ internal class MatchOverviewScreen : Screen
 
     private int SelectedSet { get; set; }
 
+    private List<float[]> PlayerAHistogramDatas;
+    private List<float[]> PlayerBHistogramDatas;
+
+    private const int MaxTurnScore = 180;
+    private const int ScoreStepSize = 20;
+    private const float DiagramOffset = 30.0f;
+    private const float DiagramHeight = 300.0f;
+    private const float VerticalLabelHeight = 16.0f;
+
     public MatchOverviewScreen(Match match, DependencyContainer dependencyContainer) : base(dependencyContainer)
     {
         this.MatchRepository = dependencyContainer.GetMatchRepository();
@@ -38,6 +47,29 @@ internal class MatchOverviewScreen : Screen
 
         if (this.Match.WinnerId != Guid.Empty)
             this.Winner = PlayerRepository.Read(Match.WinnerId);
+
+        PlayerAHistogramDatas = new List<float[]>();
+        PlayerBHistogramDatas = new List<float[]>();
+
+        foreach (var set in this.Match.Sets)
+        {
+            var playerAHistogramData = new float[set.Legs.Count * 3 - 1];
+            var playerBHistogramData = new float[set.Legs.Count * 3 - 1];
+
+            for (int i = 0; i < set.Legs.Count; i++)
+            {
+                var leg = set.Legs[i];
+
+                var playerAAverage = leg.Statistics[this.Match.Players[0]].AverageTurnScore;
+                var playerBAverage = leg.Statistics[this.Match.Players[1]].AverageTurnScore;
+
+                playerAHistogramData[i * 3 + 0] = playerAAverage;
+                playerBHistogramData[i * 3 + 1] = playerBAverage;
+            }
+
+            PlayerAHistogramDatas.Add(playerAHistogramData);
+            PlayerBHistogramDatas.Add(playerBHistogramData);
+        }
 
         this.SelectedSet = 0;
     }
@@ -114,7 +146,7 @@ internal class MatchOverviewScreen : Screen
                 ImGui.TableNextColumn();
                 ImGui.Text(this.Match.Sets[this.SelectedSet].Statistics[player.Id].Ninedarters.ToString());
                 ImGui.TableNextColumn();
-                // ImGui.Text(this.Match.Sets[this.SelectedSet].Statistics[player.Id].AverageTurnScore.ToString());
+                ImGui.Text(this.Match.Sets[this.SelectedSet].Statistics[player.Id].AverageScore.ToString());
             }
             ImGui.EndTable();
         }
@@ -153,9 +185,9 @@ internal class MatchOverviewScreen : Screen
                     }
                     else
                     {
-                        ImGui.Text("NO WINNER");
+                        ImGui.Text("-");
                         ImGui.TableNextColumn();
-                        ImGui.Text("NO WINNER");
+                        ImGui.Text("-");
                     }
 
                 }
@@ -166,13 +198,69 @@ internal class MatchOverviewScreen : Screen
 
         ImGui.NextColumn();
 
+        var currentPos = ImGui.GetCursorPos();
+        var width = ImGui.GetContentRegionAvail().X;
 
+        for (int i = 0; i < MaxTurnScore / (ScoreStepSize / 2); i++)
+        {
+            var y = (DiagramHeight / (MaxTurnScore / (ScoreStepSize / 2))) * i;
+            var start = currentPos + new Vector2(DiagramOffset, y);
+            var end = currentPos + new Vector2(width, y);
+
+            if (i % 2 == 1)
+            {
+                start = start - new Vector2(DiagramOffset, 0);
+            }
+
+            ImGui.GetWindowDrawList().AddLine(start, end, Color(255, 255, 255, 40));
+        }
+
+        ImGui.SetCursorPos(currentPos + new Vector2(DiagramOffset, 0));
+
+        ImGui.BeginDisabled();
+
+        ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(1f, 1f, 1f, 0.1f));
+        ImGui.PushStyleColor(ImGuiCol.PlotHistogram, new System.Numerics.Vector4(1f, 0f, 0f, 1f));
+        ImGui.PushStyleColor(ImGuiCol.TextDisabled, 0);
+
+        ImGui.PlotHistogram("##playerAHistogram", ref PlayerAHistogramDatas[this.SelectedSet][0], PlayerAHistogramDatas[this.SelectedSet].Length, 0, "", 0, MaxTurnScore, new Vector2(width - DiagramOffset, DiagramHeight));
+
+        ImGui.PopStyleColor(2);
+
+        ImGui.SetCursorPos(currentPos + new Vector2(DiagramOffset, 0));
+
+        ImGui.PushStyleColor(ImGuiCol.FrameBg, 0);
+
+        ImGui.PushStyleColor(ImGuiCol.PlotHistogram, new System.Numerics.Vector4(0f, 0f, 1f, 1f));
+
+        var values2 = PlayerBHistogramDatas[0];
+        ImGui.PlotHistogram("##playerBHistogram", ref PlayerBHistogramDatas[this.SelectedSet][0], PlayerBHistogramDatas[this.SelectedSet].Length, 0, "", 0, MaxTurnScore, new Vector2(width - DiagramOffset, DiagramHeight));
+
+        ImGui.PopStyleColor(3);
+
+        ImGui.EndDisabled();
+
+
+        for (int i = 0; i < MaxTurnScore / ScoreStepSize + 1; i++)
+        {
+            ImGui.SetCursorPos(currentPos + new Vector2(0, (DiagramHeight / (MaxTurnScore / ScoreStepSize)) * i - (VerticalLabelHeight / 2)));
+
+            var label = (MaxTurnScore - (i * ScoreStepSize)).ToString();
+            ImGuiExtensions.RightAlignText(label, DiagramOffset - 5.0f);
+        }
 
         ImGui.Columns();
 
-        if (ImGuiExtensions.Button("Ok"))
+        if (ImGuiExtensions.Button("Back"))
             this.ScreenNavigator.PopToRoot();
 
+        ImGui.SameLine();
 
+        if (ImGuiExtensions.Button("Export"))
+        {
+
+        }
     }
+
+    public static uint Color(byte r, byte g, byte b, byte a) { uint ret = a; ret <<= 8; ret += b; ret <<= 8; ret += g; ret <<= 8; ret += r; return ret; }
 }

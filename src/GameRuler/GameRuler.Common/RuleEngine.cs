@@ -57,6 +57,10 @@ public class RuleEngine
                 Ninedarters = 0,
                 SetsWon = 0,
             });
+
+            player.PlayedGames.Add(this.Match.Id);
+
+            this.PlayerRepository.Save(player);
         }
 
         this.CurrentPlayer = this.Players[0];
@@ -78,6 +82,7 @@ public class RuleEngine
                 OneEighties = 0,
                 Ninedarters = 0,
                 LegsWon = 0,
+                AverageScore = 0,
             });
         }
 
@@ -268,6 +273,7 @@ public class RuleEngine
             var setStatistic = this.GetPlayerSetStatistic(player);
             var legStatistic = this.GetPlayerLegStatistic(player);
 
+            setStatistic.AverageScore = CalculateAverageIteratively(setStatistic.AverageScore, legStatistic.AverageTurnScore, setStatistic.LegsPlayed);
             setStatistic.LegsPlayed += 1;
 
             if (player == CurrentPlayer)
@@ -320,6 +326,17 @@ public class RuleEngine
 
     private void EndMatch()
     {
+        foreach (var player in this.Players)
+        {
+            var isWinner = player == this.CurrentPlayer;
+
+            if (isWinner)
+                player.WonGames.Add(this.Match.Id);
+            else
+                player.LostGames.Add(this.Match.Id);
+
+            this.PlayerRepository.Save(player);
+        }
         this.Match.WinnerId = this.CurrentPlayer.Id;
     }
 
