@@ -1,5 +1,6 @@
 #pragma warning disable 8618
 
+using App.Models;
 using Newtonsoft.Json;
 
 namespace App.Repository.LocalRepository.Models;
@@ -15,17 +16,14 @@ internal class Player
     [JsonProperty("played_games")]
     public List<Guid> PlayedGames { get; set; }
 
-    [JsonProperty("wins")]
-    public uint Wins { get; set; }
+    [JsonProperty("won_games")]
+    public List<Guid> WonGames { get; set; }
 
-    [JsonProperty("lossess")]
-    public uint Lossess { get; set; }
+    [JsonProperty("lost_games")]
+    public List<Guid> LostGames { get; set; }
 
-    [JsonProperty("tripledarts")]
-    public uint Tripledarts { get; set; }
-
-    [JsonProperty("ninedarters")]
-    public uint Ninedarters { get; set; }
+    [JsonProperty("statistic")]
+    public PlayerStatistic Statistic { get; set; }
 
     public Player() { }
 
@@ -34,10 +32,9 @@ internal class Player
         this.Id = player.Id;
         this.FullName = player.FullName;
         this.PlayedGames = player.PlayedGames;
-        this.Wins = player.Wins;
-        this.Lossess = player.Lossess;
-        this.Tripledarts = player.Tripledarts;
-        this.Ninedarters = player.Ninedarters;
+        this.WonGames = player.WonGames;
+        this.LostGames = player.LostGames;
+        this.Statistic = player.Statistic;
     }
 
     public App.Models.Player ToReal()
@@ -47,10 +44,9 @@ internal class Player
         player.Id = this.Id;
         player.FullName = this.FullName;
         player.PlayedGames = this.PlayedGames;
-        player.Wins = this.Wins;
-        player.Lossess = this.Lossess;
-        player.Tripledarts = this.Tripledarts;
-        player.Ninedarters = this.Ninedarters;
+        player.WonGames = this.WonGames;
+        player.LostGames = this.LostGames;
+        player.Statistic = this.Statistic;
 
         return player;
     }

@@ -12,7 +12,7 @@ public class DartInput
         {
             this.input = value;
 
-            this.IsValid = this.ParseInput(this.input, out uint newValue, out ThrowKind throwKind);
+            this.IsValid = this.ParseInput(this.input, out int newValue, out ThrowKind throwKind);
             this.Value = newValue;
             this.ThrowKind = throwKind;
         }
@@ -21,7 +21,7 @@ public class DartInput
 
     public bool HasInput => input != string.Empty;
     public bool IsValid { get; private set; }
-    public uint Value { get; private set; }
+    public int Value { get; private set; }
     public ThrowKind ThrowKind { get; private set; }
 
     public DartInput()
@@ -33,7 +33,7 @@ public class DartInput
         this.input = string.Empty;
     }
 
-    private bool ParseInput(string input, out uint value, out ThrowKind throwKind)
+    private bool ParseInput(string input, out int value, out ThrowKind throwKind)
     {
         var prefix = input.Substring(0, Math.Min(1, input.Length));
 
@@ -43,7 +43,7 @@ public class DartInput
             return false;
         }
 
-        if (!this.ParseThrownValue(input, throwKind, out uint thrownValue))
+        if (!this.ParseThrownValue(input, throwKind, out int thrownValue))
         {
             value = 0;
             return false;
@@ -53,7 +53,7 @@ public class DartInput
         return true;
     }
 
-    private bool ParseThrownValue(string input, ThrowKind throwKind, out uint value)
+    private bool ParseThrownValue(string input, ThrowKind throwKind, out int value)
     {
         switch (throwKind)
         {
@@ -72,10 +72,10 @@ public class DartInput
         }
     }
 
-    private bool ParseDoubleOrTriple(string input, out uint value)
+    private bool ParseDoubleOrTriple(string input, out int value)
     {
         var stringValue = input.Substring(Math.Min(1, input.Length), Math.Min(2, input.Length - 1));
-        if (!uint.TryParse(stringValue, out uint parsedValue))
+        if (!int.TryParse(stringValue, out int parsedValue))
         {
             value = 0;
             return false;
@@ -91,7 +91,7 @@ public class DartInput
         return true;
     }
 
-    private bool ParseSingle(string input, out uint value)
+    private bool ParseSingle(string input, out int value)
     {
         var prefix = input.Substring(0, Math.Min(1, input.Length));
         string stringValue = string.Empty;
@@ -101,7 +101,7 @@ public class DartInput
         else
             stringValue = input.Substring(Math.Min(1, input.Length), Math.Min(2, input.Length - 1));
 
-        if (!uint.TryParse(stringValue, out uint parsedValue))
+        if (!int.TryParse(stringValue, out int parsedValue))
         {
             value = 0;
             return false;

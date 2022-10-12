@@ -1,10 +1,20 @@
+using System.Text;
 using App.Models;
+using App.Repository;
 
 namespace App.Builders;
 
 public class MatchBuilder
 {
-    public Match Result { get; private set; }
+    public DateTime Date { get; set; }
+    public Guid WinnerId { get; set; }
+    public int SetsToWin { get; set; }
+    public int LegsToWin { get; set; }
+    public int ScoreToWin { get; set; }
+    public int ThrowsPerTurn { get; set; }
+
+    private List<Guid> Players { get; set; }
+    private List<Set> Sets { get; set; }
 
 #pragma warning disable 8618
     public MatchBuilder()
@@ -15,52 +25,64 @@ public class MatchBuilder
 
     public void Reset()
     {
-        this.Result = new Match();
-
-        this.Result.Id = Guid.NewGuid();
-        this.Result.Date = DateTime.Now;
-        this.Result.Players = new List<Guid>();
-        this.Result.WinnerId = null;
-        this.Result.SetsToWin = 5;
-        this.Result.LegsToWin = 5;
-        this.Result.ScoreToWin = 501;
-        this.Result.ThrowsPerTurn = 3;
-        this.Result.Sets = new List<Set>();
+        this.Date = DateTime.Now;
+        this.Players = new List<Guid>();
+        this.WinnerId = Guid.Empty;
+        this.SetsToWin = 5;
+        this.LegsToWin = 5;
+        this.ScoreToWin = 501;
+        this.ThrowsPerTurn = 3;
+        this.Sets = new List<Set>();
     }
 
     public MatchBuilder AddPlayer(Player player)
     {
-        this.Result.Players.Add(player.Id);
+        this.Players.Add(player.Id);
         return this;
     }
 
     public MatchBuilder AddPlayer(Guid playerId)
     {
-        this.Result.Players.Add(playerId);
+        this.Players.Add(playerId);
         return this;
     }
 
-    public MatchBuilder SetSetsToWin(uint setsTowin)
+    public Match Build(IPlayerRepository playerRepository)
     {
-        this.Result.SetsToWin = setsTowin;
-        return this;
+        var match = new Match();
+
+        match.Id = Guid.NewGuid();
+        match.Date = this.Date;
+        match.Players = this.Players;
+        match.WinnerId = this.WinnerId;
+        match.SetsToWin = this.SetsToWin;
+        match.LegsToWin = this.LegsToWin;
+        match.ScoreToWin = this.ScoreToWin;
+        match.ThrowsPerTurn = this.ThrowsPerTurn;
+        match.Sets = this.Sets;
+        match.Statistics = new Dictionary<Guid, PlayerMatchStatistic>();
+
+        this.Reset();
+
+        return match;
     }
 
-    public MatchBuilder SetLegsToWin(uint legsTowin)
+    private string BuildName(Match match, IPlayerRepository playerRepository)
     {
-        this.Result.LegsToWin = legsTowin;
-        return this;
-    }
+        var titleBuilder = new StringBuilder();
 
-    public MatchBuilder SetScoreToWin(uint scoreToWin)
-    {
-        this.Result.ScoreToWin = scoreToWin;
-        return this;
-    }
+        for (int i = 0; i < match.Players.Count; i++)
+        {
+            if (i != 0)
+                titleBuilder.Append(" vs ");
 
-    public MatchBuilder SetThrowsPerTurn(uint throwsPerTurn)
-    {
-        this.Result.ThrowsPerTurn = throwsPerTurn;
-        return this;
+            string playerName = playerRepository.Read(match.Players[i])?.FullName ?? "Unknown Player";
+            titleBuilder.Append(playerName);
+        }
+
+        titleBuilder.Append(" | ");
+        titleBuilder.Append(match.Date.ToString("dd-MM-yyyy HH:mm"));
+
+        return titleBuilder.ToString();
     }
 }

@@ -10,7 +10,7 @@ internal class Turn
     public Guid Id { get; set; }
 
     [JsonProperty("score")]
-    public uint Score { get; set; }
+    public int Score { get; set; }
 
     [JsonProperty("throws")]
     public List<Throw> Throws { get; set; }
@@ -21,7 +21,7 @@ internal class Turn
     {
         this.Id = turn.Id;
         this.Score = turn.Score;
-        this.Throws = turn.Throws.Select(throww => new Throw(throww)).ToList();
+        this.Throws = turn.Throws.Select(@throw => new Throw(@throw)).ToList();
     }
 
     public App.Models.Turn ToReal()
@@ -30,7 +30,7 @@ internal class Turn
 
         turn.Id = this.Id;
         turn.Score = this.Score;
-        turn.Throws = this.Throws.Select(throww => throww.ToReal()).ToList();
+        turn.Throws = this.Throws.Select(@throw => @throw.ToReal()).ToList();
 
         return turn;
     }
