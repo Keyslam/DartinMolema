@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="wWUWmePfFoA0XAe7wffy" name="Template">
-        <mxGraphModel dx="263" dy="133" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="254" dy="132" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -598,7 +598,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="5WxBmlDxBeDfMbCWCm4e" name="Sprint 5">
-        <mxGraphModel dx="-65" dy="457" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="-123" dy="367" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="EgyU_JwmTStqvshgftFE-0"/>
                 <mxCell id="EgyU_JwmTStqvshgftFE-1" parent="EgyU_JwmTStqvshgftFE-0"/>
@@ -695,50 +695,169 @@
                 <mxCell id="7uS4D4G_KZT0SfTqxQNg-20" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D79B00;strokeColor=#d79b00;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1430" y="629" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="3-jHk8vX6ICV6hOLliVI-0" value="Meer taken vroeg inschatten" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82B366;strokeColor=#82b366;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="3-jHk8vX6ICV6hOLliVI-0" value="Meer taken vroeg inschatten" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82B366;strokeColor=#82b366;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1010" y="629" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="UzjOUcLkQmT4mIGzbPe8-0" value="Duidelijker aan de opdrachtgever maken wanneer dingen worden opgeleverd" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="UzjOUcLkQmT4mIGzbPe8-0" value="Duidelijker aan de opdrachtgever maken wanneer dingen worden opgeleverd" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1150" y="680" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="XsG1JxhzJDbBNIYlTR9W-0" value="Dingen daadwerkelijk opleveren die worden beloofd" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="XsG1JxhzJDbBNIYlTR9W-0" value="Dingen daadwerkelijk opleveren die worden beloofd" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1150" y="730" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="M4zVJgVzYS3ivsJUt3Q1-0" value="Review process toepassen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="M4zVJgVzYS3ivsJUt3Q1-0" value="Review process toepassen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1290" y="680" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="HhDrULP-lj6e8vjQT8Pi-0" value="2 Dagen in de week fysiek op school aan het werk" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="HhDrULP-lj6e8vjQT8Pi-0" value="2 Dagen in de week fysiek op school aan het werk" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1290" y="730" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="Ds-QCZqjDGu2x_rDzPIr-0" value="Kaarten bijhouden" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="Ds-QCZqjDGu2x_rDzPIr-0" value="Kaarten bijhouden" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1150" y="780" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="6iOz1CFUm8X5vf9Jjmc8-0" value="Kaarten vroeg aanwezig" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="6iOz1CFUm8X5vf9Jjmc8-0" value="Kaarten vroeg aanwezig" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1150" y="830" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="hVc-2holXparLHKkWUVs-0" value="Reflectie toepassen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="hVc-2holXparLHKkWUVs-0" value="Reflectie toepassen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1290" y="780" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="Zt4a1xPwydVzd2fCU5Uq-0" value="&lt;span&gt;Kaarten aan 2 mensen toekennen&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="Zt4a1xPwydVzd2fCU5Uq-0" value="&lt;span&gt;Kaarten aan 2 mensen toekennen&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1290" y="830" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="ZWKclM2VJafbU4WHBu8s-0" value="&lt;span&gt;Reflecteren met Starfish&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="ZWKclM2VJafbU4WHBu8s-0" value="&lt;span&gt;Reflecteren met Starfish&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1290" y="880" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="Wz9ZyLhT9PZuHDHFDasK-0" value="NIET Offtopic raken tijdens meetings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="Wz9ZyLhT9PZuHDHFDasK-0" value="NIET Offtopic raken tijdens meetings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1290" y="930" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="4j9KQsPyi0aUMQX5cSkt-0" value="NIET Dingen op het laatste moment doen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="4j9KQsPyi0aUMQX5cSkt-0" value="NIET Dingen op het laatste moment doen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1290" y="980" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="Pb9qKdTPSg1jNCtOH2b7-0" value="Sprint planning na sprinte demo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82B366;strokeColor=#82b366;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="Pb9qKdTPSg1jNCtOH2b7-0" value="Sprint planning na sprinte demo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82B366;strokeColor=#82b366;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1010" y="680" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="Pb9qKdTPSg1jNCtOH2b7-1" value="Events in Discord gebruiken&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="Pb9qKdTPSg1jNCtOH2b7-1" value="Events in Discord gebruiken&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1150" y="880" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="Pb9qKdTPSg1jNCtOH2b7-3" value="Afspreken wanneer aanwezig" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="EgyU_JwmTStqvshgftFE-1">
+                <mxCell id="Pb9qKdTPSg1jNCtOH2b7-3" value="Afspreken wanneer aanwezig" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="EgyU_JwmTStqvshgftFE-1" vertex="1">
                     <mxGeometry x="1150" y="930" width="120" height="40" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="8Yi76RVoqQWHnIH1hT_D" name="Sprint 6">
+        <mxGraphModel dx="-73" dy="-33" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="rkrr86saiVQCqNrHMcck-0"/>
+                <mxCell id="rkrr86saiVQCqNrHMcck-1" parent="rkrr86saiVQCqNrHMcck-0"/>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-0" value="&lt;font&gt;START&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82B366;strokeColor=#82b366;fontFamily=Lucida Console;fontColor=#FFFFFF;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1010" y="570" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-1" value="&lt;font&gt;MORE OF&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1150" y="570" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-2" value="&lt;font&gt;CONTINUE&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1290" y="570" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-3" value="&lt;font&gt;LESS OF&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D79B00;strokeColor=#d79b00;fontFamily=Lucida Console;fontColor=#FFFFFF;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1430" y="570" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-4" value="&lt;font&gt;STOP&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B85450;strokeColor=#b85450;fontFamily=Lucida Console;fontColor=#FFFFFF;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1570" y="570" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-5" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1140" y="1120" as="sourcePoint"/>
+                        <mxPoint x="1140" y="560" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-6" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#d5e8d4;strokeColor=#82b366;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1000" y="1120" as="sourcePoint"/>
+                        <mxPoint x="1000" y="560.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-7" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#fff2cc;strokeColor=#d6b656;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1280" y="1120" as="sourcePoint"/>
+                        <mxPoint x="1280" y="560.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-8" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#fff2cc;strokeColor=#d6b656;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1420" y="1120" as="sourcePoint"/>
+                        <mxPoint x="1420" y="560.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-9" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1560" y="1120" as="sourcePoint"/>
+                        <mxPoint x="1560" y="560.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-10" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#f8cecc;strokeColor=#b85450;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1700" y="1120" as="sourcePoint"/>
+                        <mxPoint x="1700" y="560.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-11" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#d5e8d4;strokeColor=#82b366;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1000" y="620" as="sourcePoint"/>
+                        <mxPoint x="1120" y="620" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-12" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1120" y="619.9999999999999" as="sourcePoint"/>
+                        <mxPoint x="1260" y="620" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-13" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#fff2cc;strokeColor=#d6b656;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1260" y="620" as="sourcePoint"/>
+                        <mxPoint x="1440" y="620" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-14" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1440" y="620" as="sourcePoint"/>
+                        <mxPoint x="1580" y="620" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-15" value="" style="endArrow=none;html=1;fontFamily=Lucida Console;fontColor=#FFFFFF;strokeWidth=3;fillColor=#f8cecc;strokeColor=#b85450;" parent="rkrr86saiVQCqNrHMcck-1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1580" y="620" as="sourcePoint"/>
+                        <mxPoint x="1700" y="620" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-16" value="Fysiek werken" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B85450;strokeColor=#b85450;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1570" y="629" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-17" value="Een betere werk plek vinden" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82B366;strokeColor=#82b366;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1010" y="629" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-18" value="Duidelijk zijn waar en wanneer met martin afspreken" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C8EBF;strokeColor=#6c8ebf;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1150" y="629" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-19" value="Sprint planning na sprint demo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1290" y="629" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9RKFZUtvvwKJRX-urCKo-20" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D79B00;strokeColor=#d79b00;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1430" y="629" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="v0dEWzMb2Dfjbbjnk-Ay-0" value="Pair programming tijdens taken" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1290" y="680" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="v0dEWzMb2Dfjbbjnk-Ay-1" value="Snelheid van ontwikkeling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" parent="rkrr86saiVQCqNrHMcck-1" vertex="1">
+                    <mxGeometry x="1290" y="730" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_rv4AgbXbMfmkUoMWzZB-0" value="Woensdag digitale werkdag" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82B366;strokeColor=#82b366;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="rkrr86saiVQCqNrHMcck-1">
+                    <mxGeometry x="1010" y="680" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_rv4AgbXbMfmkUoMWzZB-1" value="Fysieke meetings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="rkrr86saiVQCqNrHMcck-1">
+                    <mxGeometry x="1290" y="780" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="_rv4AgbXbMfmkUoMWzZB-2" value="Martin in de loop houden" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D6B656;strokeColor=#D6B656;fontFamily=Lucida Console;fontColor=#FFFFFF;fontSize=8;" vertex="1" parent="rkrr86saiVQCqNrHMcck-1">
+                    <mxGeometry x="1290" y="830" width="120" height="40" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
