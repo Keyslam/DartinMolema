@@ -1,4 +1,4 @@
-using App.Core;
+using App.GameRuler;
 using App.Models;
 using App.Repository;
 
@@ -52,13 +52,23 @@ internal class DependencyContainer
         return new MatchOverviewScreen(match, this);
     }
 
+    public MatchesOverviewScreen MakeMatchesOverviewScreen()
+    {
+        return new MatchesOverviewScreen(this);
+    }
+
     public NewMatchScreen MakeNewMatchScreen()
     {
         return new NewMatchScreen(this);
     }
 
-    public PlayerOverviewScreen MakeNewPlayerOverviewScreen(Player player)
+    public PlayerOverviewScreen MakePlayerOverviewScreen(Player player)
     {
         return new PlayerOverviewScreen(player, this);
+    }
+
+    public PlayersOverviewScreen MakePlayersOverviewScreen()
+    {
+        return new PlayersOverviewScreen(this);
     }
 }
