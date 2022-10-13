@@ -8,52 +8,52 @@ namespace App.View;
 
 internal class PlayersOverviewScreen : Screen
 {
+	private IPlayerRepository PlayerRepository { get; }
+	private IReadOnlyList<Player> Players { get; }
 
-    private readonly IPlayerRepository playerRepository;
-    private IReadOnlyList<Player> players;
+	private string SearchInput { get; set; } = "";
 
-    private string searchInput = "";
+	private int SelectedIndex { get; set; } = 0;
 
-    private int selectedIndex = 0;
+	public PlayersOverviewScreen(DependencyContainer dependencyContainer) : base(dependencyContainer)
+	{
+		this.PlayerRepository = dependencyContainer.GetPlayerRepository();
+		this.Players = PlayerRepository.ReadAll();
+	}
 
-    public PlayersOverviewScreen(DependencyContainer dependencyContainer) : base(dependencyContainer)
-    {
-        this.playerRepository = dependencyContainer.GetPlayerRepository();
-        this.players = playerRepository.ReadAll();
-    }
+	public override void Update()
+	{
+		ImGui.Text("Players Overview");
 
-    public override void Update()
-    {
-        ImGui.Text("Players Overview");
+		ImGuiExtensions.Spacing(5);
 
-        ImGuiExtensions.Spacing(5);
+		var searchInput = this.SearchInput;
+		if (ImGui.InputText("Searchbar", ref searchInput, 255))
+			SearchInput = searchInput.ToLower();
 
-        if (ImGui.InputText("Searchbar", ref searchInput, 255))
-            searchInput = searchInput.ToLower();
+		ImGuiExtensions.Spacing(3);
 
-        ImGuiExtensions.Spacing(3);
+		if (ImGui.BeginChild("Players", new Vector2(0, 250), true))
+		{
+			for (int i = 0; i < Players.Count; i++)
+			{
+				if (!Players[i].FullName.ToLower().Contains(SearchInput)) continue;
 
-        if (ImGui.BeginChild("Players", new Vector2(0, 250), true))
-        {
-            for (int i = 0; i < players.Count; i++)
-            {
-                if (!players[i].FullName.ToLower().Contains(searchInput)) continue;
+				if (ImGui.Selectable(Players[i].FullName, i == SelectedIndex))
+				{
+					SelectedIndex = i;
+					this.ScreenNavigator.Push(DependencyContainer.MakePlayerOverviewScreen(Players[i]));
+				}
+			}
 
-                if (ImGui.Selectable(players[i].FullName, i == selectedIndex))
-                {
-                    selectedIndex = i;
-                    this.ScreenNavigator.Push(DependencyContainer.MakePlayerOverviewScreen(players[i]));
-                }
-            }
+			ImGui.EndChild();
+		}
 
-            ImGui.EndChild();
-        }
+		ImGuiExtensions.Spacing(3);
 
-        ImGuiExtensions.Spacing(3);
+		if (ImGuiExtensions.Button("Back"))
+			this.ScreenNavigator.PopToRoot();
 
-        if (ImGuiExtensions.Button("Back"))
-            this.ScreenNavigator.PopToRoot();
-
-    }
+	}
 
 }
