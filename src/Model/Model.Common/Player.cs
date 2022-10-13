@@ -7,7 +7,8 @@ public class Player
     public Guid Id { get; set; }
     public string FullName { get; set; }
     public List<Guid> PlayedGames { get; set; }
-    public List<Guid> WonGames { get; set; }
-    public List<Guid> LostGames { get; set; }
-    public PlayerStatistic Statistic { get; set; }
+    public uint Wins { get; set; }
+    public uint Lossess { get; set; }
+    public uint Tripledarts { get; set; }
+    public uint Ninedarters { get; set; }
 }

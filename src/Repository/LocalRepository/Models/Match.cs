@@ -16,25 +16,22 @@ internal class Match
     public List<Guid> Players { get; set; }
 
     [JsonProperty("winner_id")]
-    public Guid WinnerId { get; set; }
+    public Guid? WinnerId { get; set; }
 
     [JsonProperty("sets_to_win")]
-    public int SetsToWin { get; set; }
+    public uint SetsToWin { get; set; }
 
     [JsonProperty("legs_to_win")]
-    public int LegsToWin { get; set; }
+    public uint LegsToWin { get; set; }
 
     [JsonProperty("score_to_win")]
-    public int ScoreToWin { get; set; }
+    public uint ScoreToWin { get; set; }
 
     [JsonProperty("throws_per_turn")]
-    public int ThrowsPerTurn { get; set; }
+    public uint ThrowsPerTurn { get; set; }
 
     [JsonProperty("sets")]
     public List<Set> Sets { get; set; }
-
-    [JsonProperty("statistics")]
-    public Dictionary<Guid, PlayerMatchStatistic> Statistics { get; set; }
 
     public Match() { }
 
@@ -49,12 +46,6 @@ internal class Match
         this.ScoreToWin = match.ScoreToWin;
         this.ThrowsPerTurn = match.ThrowsPerTurn;
         this.Sets = match.Sets.Select(set => new Set(set)).ToList();
-        this.Statistics = new Dictionary<Guid, PlayerMatchStatistic>();
-        foreach (var (guid, statistics) in match.Statistics)
-        {
-            var statistic = new PlayerMatchStatistic(statistics);
-            this.Statistics.Add(guid, statistic);
-        }
     }
 
 
@@ -70,13 +61,6 @@ internal class Match
         match.LegsToWin = this.LegsToWin;
         match.ScoreToWin = this.ScoreToWin;
         match.ThrowsPerTurn = this.ThrowsPerTurn;
-        match.Statistics = new Dictionary<Guid, App.Models.PlayerMatchStatistic>();
-        match.Sets = this.Sets.Select(set => set.ToReal()).ToList();
-        foreach (var (guid, statistics) in this.Statistics)
-        {
-            var statistic = statistics.ToReal();
-            match.Statistics.Add(guid, statistic);
-        }
 
         return match;
     }

@@ -1,5 +1,6 @@
 #pragma warning disable 8618
 
+using App.Models;
 using Newtonsoft.Json;
 
 namespace App.Repository.LocalRepository.Models;
@@ -10,33 +11,33 @@ internal class Throw
     public Guid Id { get; set; }
 
     [JsonProperty("thrown_value")]
-    public int ThrownValue { get; set; }
+    public uint ThrownValue { get; set; }
 
     [JsonProperty("assigned_value")]
-    public int AssignedValue { get; set; }
+    public uint AssignedValue { get; set; }
 
     [JsonProperty("kind")]
-    public App.Models.ThrowKind Kind { get; set; }
+    public ThrowKind Kind { get; set; }
 
     public Throw() { }
 
-    public Throw(App.Models.Throw @throw)
+    public Throw(App.Models.Throw throww)
     {
-        this.Id = @throw.Id;
-        this.ThrownValue = @throw.ThrownValue;
-        this.AssignedValue = @throw.AssignedValue;
-        this.Kind = @throw.Kind;
+        this.Id = throww.Id;
+        this.ThrownValue = throww.ThrownValue;
+        this.AssignedValue = throww.AssignedValue;
+        this.Kind = throww.Kind;
     }
 
     public App.Models.Throw ToReal()
     {
-        var @throw = new App.Models.Throw();
+        var throww = new App.Models.Throw();
 
-        @throw.Id = this.Id;
-        @throw.ThrownValue = this.ThrownValue;
-        @throw.AssignedValue = this.AssignedValue;
-        @throw.Kind = this.Kind;
+        throww.Id = this.Id;
+        throww.ThrownValue = this.ThrownValue;
+        throww.AssignedValue = this.AssignedValue;
+        throww.Kind = this.Kind;
 
-        return @throw;
+        return throww;
     }
 }
