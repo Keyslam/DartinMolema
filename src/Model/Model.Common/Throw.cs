@@ -5,7 +5,7 @@ namespace App.Models;
 public class Throw
 {
     public Guid Id { get; set; }
-    public uint ThrownValue { get; set; }
-    public uint AssignedValue { get; set; }
+    public int ThrownValue { get; set; }
+    public int AssignedValue { get; set; }
     public ThrowKind Kind { get; set; }
 }

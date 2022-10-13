@@ -1,3 +1,4 @@
+using System.Linq;
 using App.Models;
 using App.Repository;
 
@@ -5,165 +6,342 @@ namespace App.GameRuler;
 
 public class RuleEngine
 {
-    public delegate void TurnPlayedHandler(Player player, Turn turn);
-    public event TurnPlayedHandler? TurnPlayed;
+  private IMatchRepository MatchRepository { get; }
+  private IPlayerRepository PlayerRepository { get; }
+  private Match Match { get; }
 
-    public class PlayerStatistic
+  public Set CurrentSet { get; private set; }
+  public Leg CurrentLeg { get; private set; }
+  public Player CurrentPlayer { get; private set; }
+
+  public IList<Player> Players { get; }
+
+  public int SetsToWin
+  {
+    get => this.Match.SetsToWin;
+  }
+
+  public int LegsToWin
+  {
+    get => this.Match.LegsToWin;
+  }
+
+  public int ScoreToWin
+  {
+    get => this.Match.ScoreToWin;
+  }
+
+  public int ThrowsPerTurn
+  {
+    get => this.Match.ThrowsPerTurn;
+  }
+
+#pragma warning disable 8618
+  public RuleEngine(Match match, IMatchRepository matchRepository, IPlayerRepository playerRepository)
+  {
+    this.Match = match;
+
+    this.MatchRepository = matchRepository;
+    this.PlayerRepository = playerRepository;
+
+    this.Players = this.Match.Players
+        .Select(playerId => PlayerRepository.Read(playerId)!)
+        .Where(player => player != null)
+        .ToList();
+
+    foreach (var player in this.Players)
     {
-        public uint AveragePoints { get; set; }
-        public uint SetsWon { get; set; }
-        public uint LegsWon { get; set; }
-        public uint RemainingPoints { get; set; }
-        public uint Tripledarts { get; set; }
-
-        public PlayerStatistic(uint targetPoints)
-        {
-            this.AveragePoints = 0;
-            this.SetsWon = 0;
-            this.LegsWon = 0;
-            this.RemainingPoints = targetPoints;
-            this.Tripledarts = 0;
-        }
+      this.Match.Statistics.Add(player.Id, new PlayerMatchStatistic()
+      {
+        OneEighties = 0,
+        Ninedarters = 0,
+        SetsWon = 0,
+      });
     }
 
-    private IMatchRepository MatchRepository { get; }
-    private IPlayerRepository PlayerRepository { get; }
-    private Match Match { get; }
+    this.CurrentPlayer = this.Players[0];
 
-    private Set? CurrentSet { get; set; }
-    private Leg? CurrentLeg { get; set; }
+    this.StartNewSet();
+    this.StartNewLeg();
 
-    public Player CurrentPlayer { get; set; }
-    public Dictionary<Player, PlayerStatistic> PlayerStatistics { get; }
+    this.MatchRepository.Save(this.Match);
+  }
+#pragma warning restore 8618
 
-    public List<Player> Players { get; }
+  public void StartNewSet()
+  {
+    var statistics = new Dictionary<Guid, PlayerSetStatistic>();
 
-    public uint SetsToWin
+    foreach (var player in this.Players)
     {
-        get => this.Match.SetsToWin;
+      statistics.Add(player.Id, new PlayerSetStatistic()
+      {
+        OneEighties = 0,
+        Ninedarters = 0,
+        LegsWon = 0,
+      });
     }
 
-    public uint LegsToWin
+    this.CurrentSet = new Set()
     {
-        get => this.Match.LegsToWin;
+      Id = Guid.NewGuid(),
+      WinnerId = Guid.Empty,
+      Legs = new List<Leg>(),
+      Statistics = statistics,
+    };
+
+    this.Match.Sets.Add(this.CurrentSet);
+
+    this.MatchRepository.Save(this.Match);
+  }
+
+  public void StartNewLeg()
+  {
+    var turns = new Dictionary<Guid, List<Turn>>();
+    foreach (var player in this.Players)
+      turns.Add(player.Id, new List<Turn>());
+
+    var statistics = new Dictionary<Guid, PlayerLegStatistic>();
+    foreach (var player in this.Players)
+    {
+      statistics.Add(player.Id, new PlayerLegStatistic()
+      {
+        AverageTurnScore = 0,
+        OneEighties = 0,
+        RemainingPoints = Match.ScoreToWin
+      });
     }
 
-    public uint ScoreToWin
+    this.CurrentLeg = new Leg()
     {
-        get => this.Match.ScoreToWin;
+      Id = Guid.NewGuid(),
+      WinnerId = Guid.NewGuid(),
+      Turns = turns,
+      Statistics = statistics,
+    };
+
+    this.CurrentSet.Legs.Add(this.CurrentLeg);
+
+    this.MatchRepository.Save(this.Match);
+  }
+
+  public int GetRemainingPointsAfterTurn(List<(ThrowKind throwKind, int value)> throws)
+  {
+    var totalPoins = throws
+        .Select(@throw => CalculateThrowScore(@throw.throwKind, @throw.value))
+        .Sum();
+
+    var remainingPoints = this.GetCurrentPlayerLegStatistic().RemainingPoints;
+
+    var remainingPointsAfterTurn = remainingPoints - totalPoins;
+
+    if (remainingPointsAfterTurn == 0)
+    {
+      var lastThrow = throws.Last();
+      var lastThrowCountsAsDouble = this.DoesThrowCountAsDouble(lastThrow.throwKind);
+
+      if (!lastThrowCountsAsDouble)
+        return remainingPoints;
     }
 
-    public uint ThrowsPerTurn
+    if (remainingPoints < 0)
+      return remainingPoints;
+
+    return remainingPointsAfterTurn;
+  }
+
+  public bool PlayTurn(List<(ThrowKind throwKind, int value)> throws)
+  {
+    var matchStatistic = this.GetCurrentPlayerMatchStatistic();
+    var setStatistic = this.GetCurrentPlayerSetStatistic();
+    var legStatistic = this.GetCurrentPlayerLegStatistic();
+
+    var previousRemainingPoints = legStatistic.RemainingPoints;
+    var newRemainingPoints = this.GetRemainingPointsAfterTurn(throws);
+
+    var turnScore = previousRemainingPoints - newRemainingPoints;
+
+    var turn = new Turn()
     {
-        get => this.Match.ThrowsPerTurn;
+      Id = Guid.NewGuid(),
+      Score = turnScore,
+      Throws = new List<Throw>(),
+    };
+
+    foreach (var throwData in throws)
+    {
+      var @throw = new Throw()
+      {
+        Id = Guid.NewGuid(),
+        Kind = throwData.throwKind,
+        ThrownValue = throwData.value,
+        AssignedValue = previousRemainingPoints == newRemainingPoints ? 0 : throwData.value,
+      };
+
+      turn.Throws.Add(@throw);
     }
 
-    public RuleEngine(Match match, IMatchRepository matchRepository, IPlayerRepository playerRepository)
+    var turns = this.CurrentLeg.Turns[this.CurrentPlayer.Id];
+    turns.Add(turn);
+
+    UpdateStatistics(newRemainingPoints, turnScore);
+
+    legStatistic.RemainingPoints = newRemainingPoints;
+    legStatistic.PlayedTurns += 1;
+
+    var didMatchEnd = false;
+    if (newRemainingPoints == 0)
+      didMatchEnd = EndLeg();
+
+    var indexOf = this.Players.IndexOf(this.CurrentPlayer);
+    var nextIndex = indexOf == this.Players.Count - 1 ? 0 : indexOf + 1;
+    this.CurrentPlayer = this.Players[nextIndex];
+
+    this.MatchRepository.Save(this.Match);
+
+    return didMatchEnd;
+  }
+
+  public PlayerMatchStatistic GetCurrentPlayerMatchStatistic() => this.GetPlayerMatchStatistic(this.CurrentPlayer);
+  public PlayerMatchStatistic GetPlayerMatchStatistic(Player player) => this.GetPlayerMatchStatistic(player.Id);
+  public PlayerMatchStatistic GetPlayerMatchStatistic(Guid playerId) => this.Match.Statistics[playerId];
+
+  public PlayerSetStatistic GetCurrentPlayerSetStatistic() => this.GetPlayerSetStatistic(this.CurrentPlayer);
+  public PlayerSetStatistic GetPlayerSetStatistic(Player player) => this.GetPlayerSetStatistic(player.Id);
+  public PlayerSetStatistic GetPlayerSetStatistic(Guid playerId) => this.CurrentSet.Statistics[playerId];
+
+  public PlayerLegStatistic GetCurrentPlayerLegStatistic() => this.GetPlayerLegStatistic(this.CurrentPlayer);
+  public PlayerLegStatistic GetPlayerLegStatistic(Player player) => this.GetPlayerLegStatistic(player.Id);
+  public PlayerLegStatistic GetPlayerLegStatistic(Guid playerId) => this.CurrentLeg.Statistics[playerId];
+
+  public List<Turn> GetCurrentPlayerTurns() => this.GetPlayerTurns(this.CurrentPlayer);
+  public List<Turn> GetPlayerTurns(Player player) => this.GetPlayerTurns(player.Id);
+  public List<Turn> GetPlayerTurns(Guid playerId) => this.CurrentLeg.Turns[playerId];
+
+  private int CalculateThrowScore(ThrowKind throwKind, int value)
+  {
+    switch (throwKind)
     {
-        this.Match = match;
+      case ThrowKind.None:
+        return 0;
+      case ThrowKind.Foul:
+        return 0;
+      case ThrowKind.Single:
+        return value;
+      case ThrowKind.Double:
+        return value * 2;
+      case ThrowKind.Triple:
+        return value * 3;
+      case ThrowKind.OuterBull:
+        return value * 1;
+      case ThrowKind.InnerBull:
+        return value * 2;
+      default:
+        return 0;
+    }
+  }
 
-        this.MatchRepository = matchRepository;
-        this.PlayerRepository = playerRepository;
+  private bool DoesThrowCountAsDouble(ThrowKind throwKind)
+  {
+    if (throwKind == ThrowKind.Double)
+      return true;
 
-        this.Players = new List<Player>();
-        this.PlayerStatistics = new Dictionary<Player, PlayerStatistic>();
+    if (throwKind == ThrowKind.InnerBull)
+      return true;
 
-        foreach (var playerId in this.Match.Players)
-        {
-            var player = PlayerRepository.Read(playerId)!;
-            this.Players.Add(player);
+    return false;
+  }
 
-            this.PlayerStatistics.Add(player, new PlayerStatistic(match.ScoreToWin));
-        }
+  private bool EndLeg()
+  {
+    foreach (var player in this.Players)
+    {
+      var isWinningPlayer = player == this.CurrentPlayer;
 
-        this.CurrentPlayer = this.Players[0];
+      var matchStatistic = this.GetPlayerMatchStatistic(player);
+      var setStatistic = this.GetPlayerSetStatistic(player);
+      var legStatistic = this.GetPlayerLegStatistic(player);
 
-        this.MatchRepository.Save(this.Match);
+      setStatistic.LegsPlayed += 1;
+
+      if (player == CurrentPlayer)
+        setStatistic.LegsWon += 1;
     }
 
-    public void StartSet()
+    var currentPlayerSetStatistic = this.GetCurrentPlayerSetStatistic();
+    var isSetWon = currentPlayerSetStatistic.LegsWon == this.Match.LegsToWin;
+
+    var didMatchEnd = false;
+    if (isSetWon)
+      didMatchEnd = EndSet();
+    else
+      StartNewLeg();
+
+    return didMatchEnd;
+  }
+
+  private bool EndSet()
+  {
+    foreach (var player in this.Players)
     {
-        this.CurrentSet = new Set();
+      var isWinningPlayer = player == this.CurrentPlayer;
 
-        this.CurrentSet.Id = Guid.NewGuid();
-        this.CurrentSet.WinnerId = null;
-        this.CurrentSet.Legs = new List<Leg>();
+      var matchStatistic = this.GetPlayerMatchStatistic(player);
+      var setStatistic = this.GetPlayerSetStatistic(player);
+      var legStatistic = this.GetPlayerLegStatistic(player);
 
-        this.Match.Sets.Add(this.CurrentSet);
+      matchStatistic.SetsPlayed += 1;
 
-        this.MatchRepository.Save(this.Match);
+      if (player == CurrentPlayer)
+        matchStatistic.SetsWon += 1;
     }
 
-    public void EndSet()
-    {
+    var currentPlayerMatchStatistic = this.GetCurrentPlayerMatchStatistic();
+    var isMatchWon = currentPlayerMatchStatistic.SetsWon == this.Match.SetsToWin;
 
+    if (isMatchWon)
+    {
+      EndMatch();
+      return true;
+    }
+    else
+      StartNewSet();
+
+    return false;
+  }
+
+  private void EndMatch()
+  {
+    this.Match.WinnerId = this.CurrentPlayer.Id;
+  }
+
+  private int CalculateAverageIteratively(int previousAverage, int addedValue, int totalRecords)
+  {
+    return ((previousAverage * totalRecords) + addedValue) / (totalRecords + 1);
+  }
+
+  private void UpdateStatistics(int newRemainingPoints, int turnScore)
+  {
+    var matchStatistic = this.GetCurrentPlayerMatchStatistic();
+    var setStatistic = this.GetCurrentPlayerSetStatistic();
+    var legStatistic = this.GetCurrentPlayerLegStatistic();
+
+    legStatistic.AverageTurnScore = this.CalculateAverageIteratively(legStatistic.AverageTurnScore, turnScore, legStatistic.PlayedTurns);
+
+    var IsOneEighty = turnScore == 180;
+    if (IsOneEighty)
+    {
+      legStatistic.OneEighties += 1;
+      setStatistic.OneEighties += 1;
+      matchStatistic.OneEighties += 1;
     }
 
-    public void StartLeg()
+    var IsNineDarter = newRemainingPoints == 0 && legStatistic.PlayedTurns == 3;
+    if (IsNineDarter)
     {
-        if (this.CurrentSet == null)
-            throw new InvalidOperationException();
-
-        this.CurrentLeg = new Leg();
-
-        this.CurrentLeg.Id = Guid.NewGuid();
-        this.CurrentLeg.WinnerId = null;
-        this.CurrentLeg.Turns = new Dictionary<Guid, List<Turn>>();
-
-        foreach (var player in this.Players)
-            this.CurrentLeg.Turns.Add(player.Id, new List<Turn>());
-
-        this.CurrentSet.Legs.Add(this.CurrentLeg);
-
-        this.MatchRepository.Save(this.Match);
+      legStatistic.IsNineDarter = true;
+      setStatistic.Ninedarters += 1;
+      matchStatistic.Ninedarters += 1;
     }
-
-    public void EndLeg()
-    {
-        var indexOf = this.Players.IndexOf(this.CurrentPlayer);
-        var nextIndex = indexOf == this.Players.Count - 1 ? 0 : indexOf + 1;
-        this.CurrentPlayer = this.Players[nextIndex];
-    }
-
-    public bool PlayTurn(List<(ThrowKind throwKind, uint value)> throws)
-    {
-        if (this.CurrentLeg == null)
-            throw new InvalidOperationException();
-
-        var turn = new Turn();
-
-        turn.Id = Guid.NewGuid();
-        turn.Score = 0;
-        turn.Throws = new List<Throw>();
-
-        // TurnPlayed?.Invoke(player, throww);
-
-        foreach (var throwData in throws)
-        {
-            var throww = new Throw();
-
-            throww.Id = Guid.NewGuid();
-            throww.Kind = throwData.throwKind;
-            throww.ThrownValue = throwData.value;
-
-            turn.Throws.Add(throww);
-        }
-
-        var turns = this.CurrentLeg.Turns[this.CurrentPlayer.Id];
-        turns.Add(turn);
-
-        this.MatchRepository.Save(this.Match);
-
-        return true;
-    }
-
-    public List<Turn> GetCurrentTurns(Guid playerId)
-    {
-        if (this.CurrentLeg == null)
-            throw new InvalidOperationException();
-
-        var turns = this.CurrentLeg.Turns[playerId];
-
-        return turns;
-    }
+  }
 }
