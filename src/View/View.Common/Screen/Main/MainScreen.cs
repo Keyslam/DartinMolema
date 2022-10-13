@@ -21,7 +21,7 @@ internal class MainScreen : Screen
         if (ImGuiExtensions.Button("Matches Overview"))
             this.ScreenNavigator.Push(this.DependencyContainer.MakeMatchesOverviewScreen());
 
-        ImGuiExtensions.Button("Match Overview");
+        ImGui.Button("Match Overview");
         ImGui.Button("Import Match");
     }
 }

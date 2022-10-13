@@ -15,14 +15,17 @@ internal class Player
     [JsonProperty("played_games")]
     public List<Guid> PlayedGames { get; set; }
 
-    [JsonProperty("won_games")]
-    public List<Guid> WonGames { get; set; }
+    [JsonProperty("wins")]
+    public uint Wins { get; set; }
 
-    [JsonProperty("lost_games")]
-    public List<Guid> LostGames { get; set; }
+    [JsonProperty("lossess")]
+    public uint Lossess { get; set; }
 
-    [JsonProperty("statistic")]
-    public PlayerStatistic Statistic { get; set; }
+    [JsonProperty("tripledarts")]
+    public uint Tripledarts { get; set; }
+
+    [JsonProperty("ninedarters")]
+    public uint Ninedarters { get; set; }
 
     public Player() { }
 
@@ -31,9 +34,10 @@ internal class Player
         this.Id = player.Id;
         this.FullName = player.FullName;
         this.PlayedGames = player.PlayedGames;
-        this.WonGames = player.WonGames;
-        this.LostGames = player.LostGames;
-        this.Statistic = new PlayerStatistic(player.Statistic);
+        this.Wins = player.Wins;
+        this.Lossess = player.Lossess;
+        this.Tripledarts = player.Tripledarts;
+        this.Ninedarters = player.Ninedarters;
     }
 
     public App.Models.Player ToReal()
@@ -43,9 +47,10 @@ internal class Player
         player.Id = this.Id;
         player.FullName = this.FullName;
         player.PlayedGames = this.PlayedGames;
-        player.WonGames = this.WonGames;
-        player.LostGames = this.LostGames;
-        player.Statistic = this.Statistic.ToReal();
+        player.Wins = this.Wins;
+        player.Lossess = this.Lossess;
+        player.Tripledarts = this.Tripledarts;
+        player.Ninedarters = this.Ninedarters;
 
         return player;
     }

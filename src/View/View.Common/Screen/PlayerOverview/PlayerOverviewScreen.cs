@@ -42,16 +42,16 @@ internal class PlayerOverviewScreen : Screen
             if (ImGui.TreeNodeEx("Matches", ImGuiTreeNodeFlags.DefaultOpen))
             {
                 ImGui.Text($"Matches Played: {this.matches.Count()}");
-                ImGui.Text($"Matches Won: {this.player.WonGames.Count}");
-                ImGui.Text($"Matches Lost: {this.player.LostGames.Count}");
+                ImGui.Text($"Matches Won: {this.player.Wins}");
+                ImGui.Text($"Matches Lost: {this.player.Lossess}");
 
                 ImGui.TreePop();
             }
 
             if (ImGui.TreeNodeEx("Throws", ImGuiTreeNodeFlags.DefaultOpen))
             {
-                ImGui.Text($"9 darters: {this.player.Statistic.Ninedarters}");
-                ImGui.Text($"180's: {this.player.Statistic.OneEighties}");
+                ImGui.Text($"9 darters: {this.player.Ninedarters}");
+                ImGui.Text($"180's: {this.player.Tripledarts}");
 
                 ImGui.TreePop();
             }

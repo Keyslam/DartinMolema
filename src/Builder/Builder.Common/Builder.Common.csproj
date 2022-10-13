@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Model\Model.Common\Model.Common.csproj" />
-    <ProjectReference Include="..\..\Repository\Repository.Common\Repository.Common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
