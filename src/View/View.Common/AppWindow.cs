@@ -4,6 +4,7 @@ using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using ImGuiNET;
+using App.Models;
 
 namespace App.View;
 
@@ -47,14 +48,21 @@ public class AppWindow
             // var ruleEngine = new RuleEngine(match);
             // this.screenNavigator.Push(new GameInput(ruleEngine));
 
-            // var playerRepository = new PlayerRepository();
+            // var playerRepository = dependencyContainer.GetPlayerRepository();
 
             // var playerA = new Player();
+            // playerA.Statistic = new PlayerStatistic()
+            // {
+            //     AverageTurnScore = 0,
+            //     Ninedarters = 0,
+            //     OneEighties = 0,
+            //     PlayedTurns = 0,
+            // };
             // playerA.Id = Guid.NewGuid();
-            // playerA.FullName = "Jane Doe";
+            // playerA.FullName = "Martin Makkeraat";
             // playerA.PlayedGames = new List<Guid>();
-            // playerA.Lossess = 0;
-            // playerA.Wins = 0;
+            // playerA.LostGames = new List<Guid>();
+            // playerA.WonGames = new List<Guid>();
 
             // playerRepository.Save(playerA);
 
