@@ -5,6 +5,29 @@ namespace App.Core;
 
 public static class ImGuiExtensions
 {
+    public class FireOnce
+    {
+        private bool Active;
+
+        public FireOnce(bool active)
+        {
+            this.Active = active;
+        }
+
+        public void MakeActive()
+        {
+            this.Active = true;
+        }
+
+        public bool Consume()
+        {
+            var active = this.Active;
+            this.Active = false;
+
+            return active;
+        }
+    }
+
     public static bool Button(string label)
     {
         return ImGui.Button(label) || (ImGui.IsItemFocused() && ImGui.IsKeyPressed(ImGuiKey.Enter));

@@ -14,6 +14,10 @@ internal class MatchInputScreen : Screen
     private RuleEngine RuleEngine { get; }
     private DartInput[] DartInputs { get; }
 
+    private Match Match { get; }
+
+    private ImGuiExtensions.FireOnce SelectFirstDartInput;
+
     public MatchInputScreen(Match match, DependencyContainer dependencyContainer) : base(dependencyContainer)
     {
         this.RuleEngine = this.DependencyContainer.MakeRuleEngine(match);
@@ -21,6 +25,10 @@ internal class MatchInputScreen : Screen
         this.DartInputs = new DartInput[this.RuleEngine.ThrowsPerTurn];
         for (int i = 0; i < DartInputs.Length; i++)
             this.DartInputs[i] = new DartInput();
+
+        this.Match = match;
+
+        this.SelectFirstDartInput = new ImGuiExtensions.FireOnce(true);
     }
 
     public override void Update()
@@ -85,7 +93,7 @@ internal class MatchInputScreen : Screen
 
     private void MatchStatistics()
     {
-        ImGui.PushAllowKeyboardFocus(false);
+        ImGui.BeginDisabled();
         if (ImGui.BeginTable($"Match Statistics", 6, ImGuiTableFlags.Borders))
         {
             ImGui.TableSetupColumn("Name");
@@ -123,7 +131,7 @@ internal class MatchInputScreen : Screen
 
             ImGui.EndTable();
         }
-        ImGui.PopAllowKeyboardFocus();
+        ImGui.EndDisabled();
     }
 
     private void CurrentlyPlaying()
@@ -133,22 +141,39 @@ internal class MatchInputScreen : Screen
 
     private void DartInputFields()
     {
+        var done = false;
+
         for (int i = 0; i < this.RuleEngine.ThrowsPerTurn; i++)
         {
             var dartInput = DartInputs[i];
 
             var input = dartInput.Input;
 
-            if (ImGui.InputText($"Dart {i + 1}", ref input, 3))
+            if (i == 0 && SelectFirstDartInput.Consume())
+                ImGui.SetKeyboardFocusHere();
+
+            if (ImGui.InputText($"Dart {i + 1}", ref input, 3, ImGuiInputTextFlags.AutoSelectAll))
+            {
                 dartInput.Input = input;
+            }
+
+            if (ImGui.IsItemDeactivated() && ImGui.IsKeyPressed(ImGuiKey.Enter))
+                done = true;
         }
 
         ImGui.Spacing();
 
-        if (ImGuiExtensions.Button("Enter"))
-        {
+        if (ImGuiExtensions.Button("Enter", new Vector2(120, 0)))
+            done = true;
+
+        ImGui.SameLine();
+
+        if (ImGuiExtensions.Button("Exit", new Vector2(120, 0)))
+            ScreenNavigator.PopToRoot();
+
+        if (done)
             ImGui.OpenPopup("Remaining points");
-        }
+
         ImGui.SameLine();
     }
 
@@ -157,6 +182,7 @@ internal class MatchInputScreen : Screen
         ImGui.Text($"{player.FullName} Throws");
         ImGuiExtensions.Spacing(1);
 
+        ImGui.BeginDisabled();
         if (ImGui.BeginTable($"{player.FullName} Throws", (int)this.RuleEngine.ThrowsPerTurn + 2, ImGuiTableFlags.Borders))
         {
             ImGui.TableSetupColumn("Turn");
@@ -198,6 +224,7 @@ internal class MatchInputScreen : Screen
 
             ImGui.EndTable();
         }
+        ImGui.EndDisabled();
     }
 
     private void RemainingPointsModal()
@@ -224,10 +251,21 @@ internal class MatchInputScreen : Screen
 
             ImGuiExtensions.EndDialogModal("No", "Yes", () =>
             {
-                this.RuleEngine.PlayTurn(throws);
+                var matchEnded = this.RuleEngine.PlayTurn(throws);
 
                 for (int i = 0; i < DartInputs.Length; i++)
                     this.DartInputs[i] = new DartInput();
+
+                SelectFirstDartInput.MakeActive();
+
+                if (matchEnded)
+                {
+                    ScreenNavigator.PopToRoot();
+                    ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(this.Match));
+                }
+            }, () =>
+            {
+                SelectFirstDartInput.MakeActive();
             });
         }
 

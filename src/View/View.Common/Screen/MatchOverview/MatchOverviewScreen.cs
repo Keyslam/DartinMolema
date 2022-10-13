@@ -265,7 +265,7 @@ internal class MatchOverviewScreen : Screen
         ImGui.Columns();
 
         if (ImGuiExtensions.Button("Back"))
-            this.ScreenNavigator.PopToRoot();
+            this.ScreenNavigator.Pop();
 
         ImGui.SameLine();
 

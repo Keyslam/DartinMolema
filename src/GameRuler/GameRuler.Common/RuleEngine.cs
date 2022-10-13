@@ -103,6 +103,9 @@ public class RuleEngine
 
     public void StartNewLeg()
     {
+        var numLeg = this.CurrentSet.Legs.Count;
+        this.CurrentPlayer = this.Players[numLeg % this.Players.Count];
+
         var turns = new Dictionary<Guid, List<Turn>>();
         foreach (var player in this.Players)
             turns.Add(player.Id, new List<Turn>());
@@ -143,14 +146,14 @@ public class RuleEngine
 
         if (remainingPointsAfterTurn == 0)
         {
-            var lastThrow = throws.Last();
+            var lastThrow = throws.Where(x => x.value != 0).Last();
             var lastThrowCountsAsDouble = this.DoesThrowCountAsDouble(lastThrow.throwKind);
 
             if (!lastThrowCountsAsDouble)
                 return remainingPoints;
         }
 
-        if (remainingPoints < 0)
+        if (remainingPointsAfterTurn < 0)
             return remainingPoints;
 
         return remainingPointsAfterTurn;
@@ -200,13 +203,16 @@ public class RuleEngine
         var didMatchEnd = false;
         if (newRemainingPoints == 0)
             didMatchEnd = EndLeg();
+        else
+        {
+            var indexOf = this.Players.IndexOf(this.CurrentPlayer);
+            var nextIndex = indexOf == this.Players.Count - 1 ? 0 : indexOf + 1;
+            this.CurrentPlayer = this.Players[nextIndex];
+        }
 
         this.MatchRepository.Save(this.Match);
         this.PlayerRepository.Save(this.CurrentPlayer);
 
-        var indexOf = this.Players.IndexOf(this.CurrentPlayer);
-        var nextIndex = indexOf == this.Players.Count - 1 ? 0 : indexOf + 1;
-        this.CurrentPlayer = this.Players[nextIndex];
 
         return didMatchEnd;
     }
