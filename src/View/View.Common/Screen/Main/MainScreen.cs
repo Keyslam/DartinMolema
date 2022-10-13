@@ -23,5 +23,10 @@ internal class MainScreen : Screen
 
         ImGui.Button("Match Overview");
         ImGui.Button("Import Match");
+
+        if (Environment.GetCommandLineArgs().ToList().Contains("--datagenerator") && ImGuiExtensions.Button("Generate Testdata"))
+        {
+            this.ScreenNavigator.Push(this.DependencyContainer.MakeNewTestdataGeneratorScreen());
+        }
     }
 }

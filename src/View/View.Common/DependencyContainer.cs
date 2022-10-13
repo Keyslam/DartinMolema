@@ -71,4 +71,9 @@ internal class DependencyContainer
     {
         return new PlayersOverviewScreen(this);
     }
+
+    public TestdataGeneratorScreen MakeNewTestdataGeneratorScreen()
+    {
+        return new TestdataGeneratorScreen(this);
+    }
 }
