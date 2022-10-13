@@ -114,4 +114,9 @@ public static class ImGuiExtensions
 		ImGui.SetCursorPosX(currentPos.X + width - textWidth);
 		ImGui.Text(text);
 	}
+
+	public static uint Color(byte r, byte g, byte b, byte a)
+	{
+		uint ret = a; ret <<= 8; ret += b; ret <<= 8; ret += g; ret <<= 8; ret += r; return ret;
+	}
 }

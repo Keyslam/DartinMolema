@@ -165,7 +165,7 @@ internal class MatchOverviewScreen : Screen
 			{
 				ImGui.TableSetupColumn("Leg");
 				ImGui.TableSetupColumn("Winner");
-				ImGui.TableSetupColumn("Aantal turns");
+				ImGui.TableSetupColumn("Number of turns");
 				ImGui.TableHeadersRow();
 
 				for (int i = 0; i < selectedSet.Legs.Count; i++)
@@ -212,7 +212,7 @@ internal class MatchOverviewScreen : Screen
 				start = start - new Vector2(DiagramOffset, 0);
 			}
 
-			ImGui.GetWindowDrawList().AddLine(start, end, Color(255, 255, 255, 40));
+			ImGui.GetWindowDrawList().AddLine(start, end, ImGuiExtensions.Color(255, 255, 255, 40));
 		}
 
 		ImGui.SetCursorPos(currentPos + new Vector2(DiagramOffset, 0));
@@ -274,6 +274,4 @@ internal class MatchOverviewScreen : Screen
 
 		}
 	}
-
-	public static uint Color(byte r, byte g, byte b, byte a) { uint ret = a; ret <<= 8; ret += b; ret <<= 8; ret += g; ret <<= 8; ret += r; return ret; }
 }

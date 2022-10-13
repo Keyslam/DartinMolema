@@ -4,6 +4,7 @@ using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using ImGuiNET;
+using System.Numerics;
 
 namespace App.View;
 
@@ -20,7 +21,7 @@ public class AppWindow
 	public void Run()
 	{
 		var windowOptions = WindowOptions.Default;
-		windowOptions.Size = new Vector2D<int>(1920, 1080);
+		windowOptions.Size = new Vector2D<int>(1600, 900);
 		windowOptions.Title = "Dartin Molema";
 
 		window = Window.Create(windowOptions);
@@ -49,15 +50,11 @@ public class AppWindow
 	{
 		imGuiController.Update((float)dt);
 
-		ImGui.DockSpaceOverViewport(ImGui.GetMainViewport());
 
-		if (ImGui.Begin("Test", ImGuiWindowFlags.NoTitleBar))
+		ImGui.SetNextWindowPos(new Vector2(0, 0));
+		ImGui.SetNextWindowSize(new Vector2(1600, 900));
+		if (ImGui.Begin("Main Window", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize))
 		{
-			ImGui.Text("Dartin Molema");
-			ImGui.Spacing();
-			ImGui.Separator();
-			ImGui.Spacing();
-
 			var topScreen = this.screenNavigator.GetTopScreen();
 			topScreen.Update();
 		}
