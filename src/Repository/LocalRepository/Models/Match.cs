@@ -1,6 +1,5 @@
 #pragma warning disable 8618
 
-using App.Models;
 using Newtonsoft.Json;
 
 namespace App.Repository.LocalRepository.Models;
@@ -50,7 +49,12 @@ internal class Match
         this.ScoreToWin = match.ScoreToWin;
         this.ThrowsPerTurn = match.ThrowsPerTurn;
         this.Sets = match.Sets.Select(set => new Set(set)).ToList();
-        this.Statistics = match.Statistics;
+        this.Statistics = new Dictionary<Guid, PlayerMatchStatistic>();
+        foreach (var (guid, statistics) in match.Statistics)
+        {
+            var statistic = new PlayerMatchStatistic(statistics);
+            this.Statistics.Add(guid, statistic);
+        }
     }
 
 
@@ -66,7 +70,13 @@ internal class Match
         match.LegsToWin = this.LegsToWin;
         match.ScoreToWin = this.ScoreToWin;
         match.ThrowsPerTurn = this.ThrowsPerTurn;
-        match.Statistics = this.Statistics;
+        match.Statistics = new Dictionary<Guid, App.Models.PlayerMatchStatistic>();
+        match.Sets = this.Sets.Select(set => set.ToReal()).ToList();
+        foreach (var (guid, statistics) in this.Statistics)
+        {
+            var statistic = statistics.ToReal();
+            match.Statistics.Add(guid, statistic);
+        }
 
         return match;
     }
