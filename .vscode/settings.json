@@ -10,7 +10,7 @@
         "editor.insertSpaces": false,
         "editor.autoIndent": "advanced",
         "editor.detectIndentation": false,
-        "editor.renderWhitespace": "all", 
+        // "editor.renderWhitespace": "all", 
     },
     "files.exclude": {
         "**/bin": true,

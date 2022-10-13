@@ -51,9 +51,7 @@ internal class PlayersOverviewScreen : Screen
 
 		ImGuiExtensions.Spacing(3);
 
-		if (ImGuiExtensions.Button("Back"))
+		if (ImGuiExtensions.Button("Back", new Vector2(120, 0)))
 			this.ScreenNavigator.PopToRoot();
-
 	}
-
 }

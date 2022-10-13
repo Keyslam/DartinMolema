@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text;
 using App.Core;
 using App.Models;
@@ -72,7 +73,7 @@ internal class PlayerOverviewScreen : Screen
 
 		ImGui.NewLine();
 
-		if (ImGuiExtensions.Button("Back"))
+		if (ImGuiExtensions.Button("Back", new Vector2(120, 0)))
 			this.ScreenNavigator.Pop();
 	}
 

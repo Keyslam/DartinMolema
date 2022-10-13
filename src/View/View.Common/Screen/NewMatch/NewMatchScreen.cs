@@ -154,7 +154,7 @@ internal class NewMatchScreen : Screen
 
 		if (!InputValid())
 			ImGui.BeginDisabled();
-		if (ImGuiExtensions.Button("Start"))
+		if (ImGuiExtensions.Button("Start", new Vector2(120, 0)))
 		{
 			StartMatch();
 		}
@@ -162,7 +162,7 @@ internal class NewMatchScreen : Screen
 			ImGui.EndDisabled();
 
 		ImGui.SameLine();
-		if (ImGuiExtensions.Button("Cancel"))
+		if (ImGuiExtensions.Button("Cancel", new Vector2(120, 0)))
 			this.ScreenNavigator.Pop();
 	}
 
