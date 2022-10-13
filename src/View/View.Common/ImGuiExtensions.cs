@@ -82,4 +82,13 @@ public static class ImGuiExtensions
         ImGui.SetCursorPosX((windowWidth - textWidth) * 0.5f);
         ImGui.Text(text);
     }
+
+    public static void RightAlignText(string text, float width)
+    {
+        var textWidth = ImGui.CalcTextSize(text).X;
+        var currentPos = ImGui.GetCursorPos();
+
+        ImGui.SetCursorPosX(currentPos.X + width - textWidth);
+        ImGui.Text(text);
+    }
 }
