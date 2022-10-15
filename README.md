@@ -14,6 +14,9 @@ Test `dotnet test`
 
 Or use the included NPM scripts
 
+## Command line parameters
+`--datagenerator` can be used to enable the TestdataGenerator screen which can be used to generate players and matches.
+
 ## Project structure
 ```
 /DartinMolema

@@ -61,6 +61,11 @@ public class MatchRepository : IMatchRepository
 		return matches;
 	}
 
+	public IReadOnlyList<(Guid, string)> ReadAllNames()
+	{
+		return this.ReadAll().Select(match => (match.Id, match.Name)).ToList();
+	}
+
 	private string GetBaseDirectory()
 	{
 		return $"{Environment.CurrentDirectory}/Data/Matches";
@@ -75,4 +80,6 @@ public class MatchRepository : IMatchRepository
 	{
 		return $"{this.GetBaseDirectory()}/{id}.json";
 	}
+
+
 }

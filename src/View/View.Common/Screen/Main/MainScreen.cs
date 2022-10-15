@@ -25,5 +25,8 @@ internal class MainScreen : Screen
 
 		if (ImGuiExtensions.Button("Matches Overview", new Vector2(120, 0)))
 			this.ScreenNavigator.Push(this.DependencyContainer.MakeMatchesOverviewScreen());
+
+		if (Environment.GetCommandLineArgs().ToList().Contains("--datagenerator") && ImGuiExtensions.Button("Generate Testdata"))
+			this.ScreenNavigator.Push(this.DependencyContainer.MakeNewTestdataGeneratorScreen());
 	}
 }

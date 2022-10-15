@@ -13,7 +13,7 @@ internal class DependencyContainer
 	public DependencyContainer()
 	{
 		this.ScreenNavigator = new ScreenNavigator();
-		this.MatchRepository = new App.Repository.LocalRepository.MatchRepository();
+		this.MatchRepository = new App.Repository.Caching.MatchCachingDecorator(new App.Repository.LocalRepository.MatchRepository());
 		this.PlayerRepository = new App.Repository.LocalRepository.PlayerRepository();
 	}
 
@@ -70,5 +70,10 @@ internal class DependencyContainer
 	public PlayersOverviewScreen MakePlayersOverviewScreen()
 	{
 		return new PlayersOverviewScreen(this);
+	}
+
+	public TestdataGeneratorScreen MakeNewTestdataGeneratorScreen()
+	{
+		return new TestdataGeneratorScreen(this);
 	}
 }

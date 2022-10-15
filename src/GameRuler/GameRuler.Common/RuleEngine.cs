@@ -156,6 +156,9 @@ public class RuleEngine
 		if (remainingPointsAfterTurn < 0)
 			return remainingPoints;
 
+		if (remainingPointsAfterTurn == 1)
+			return remainingPoints;
+
 		return remainingPointsAfterTurn;
 	}
 
