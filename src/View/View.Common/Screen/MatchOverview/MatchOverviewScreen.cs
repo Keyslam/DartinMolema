@@ -76,7 +76,7 @@ internal class MatchOverviewScreen : Screen
 
 	public override void Update()
 	{
-		ImGui.Text($"Match Overview - {Match.Name} - {Match.Id}");
+		ImGui.Text($"Match Overview - {Match.Name}");
 		ImGuiExtensions.Spacing(5);
 
 		ImGui.Text($"First to {Match.SetsToWin} sets wins the match");
