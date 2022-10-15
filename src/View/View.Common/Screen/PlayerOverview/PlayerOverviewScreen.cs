@@ -67,7 +67,7 @@ internal class PlayerOverviewScreen : Screen
 		var selectedMatch = this.SelectedMatch;
 		if (ImGui.ListBox("", ref selectedMatch, this.MatchTitles, this.MatchTitles.Count(), 20))
 		{
-			this.SelectedMatch = SelectedMatch;
+			this.SelectedMatch = selectedMatch;
 			this.ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(this.Matches[this.SelectedMatch]));
 		}
 

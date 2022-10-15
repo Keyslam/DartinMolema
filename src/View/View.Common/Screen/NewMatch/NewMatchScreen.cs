@@ -139,18 +139,17 @@ internal class NewMatchScreen : Screen
 		var setsToWinInput = this.SetsToWinInput;
 		if (ImGui.InputInt("Sets to win", ref setsToWinInput))
 		{
-			this.SetsToWinInput = Math.Clamp(this.SetsToWinInput, 1, 100);
+			this.SetsToWinInput = Math.Clamp(setsToWinInput, 1, 100);
 			this.MatchBuilder.SetsToWin = this.SetsToWinInput;
+			Console.WriteLine(this.MatchBuilder.SetsToWin);
 		}
-		this.SetsToWinInput = setsToWinInput;
 
 		var legsToWinInput = this.LegsToWinInput;
 		if (ImGui.InputInt("Legs to win", ref legsToWinInput))
 		{
-			this.LegsToWinInput = Math.Clamp(this.LegsToWinInput, 1, 100);
+			this.LegsToWinInput = Math.Clamp(legsToWinInput, 1, 100);
 			this.MatchBuilder.LegsToWin = this.LegsToWinInput;
 		}
-		this.LegsToWinInput = legsToWinInput;
 
 		if (!InputValid())
 			ImGui.BeginDisabled();

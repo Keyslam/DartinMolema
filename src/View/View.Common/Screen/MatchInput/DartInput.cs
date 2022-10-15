@@ -13,8 +13,17 @@ public class DartInput
 			this.input = value;
 
 			this.IsValid = this.ParseInput(this.input, out int newValue, out ThrowKind throwKind);
-			this.Value = newValue;
-			this.ThrowKind = throwKind;
+
+			if (IsValid)
+			{
+				this.Value = newValue;
+				this.ThrowKind = throwKind;
+			}
+			else
+			{
+				this.Value = 0;
+				this.ThrowKind = ThrowKind.None;
+			}
 		}
 	}
 
@@ -44,6 +53,13 @@ public class DartInput
 		}
 
 		if (!this.ParseThrownValue(input, throwKind, out int thrownValue))
+		{
+			value = 0;
+			return false;
+		}
+
+		// If input is 'i' or 'o', it may not be followed by anything else
+		if ((throwKind == ThrowKind.InnerBull || throwKind == ThrowKind.OuterBull) && input.Length > 1)
 		{
 			value = 0;
 			return false;

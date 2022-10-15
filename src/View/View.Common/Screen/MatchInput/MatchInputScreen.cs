@@ -114,7 +114,7 @@ internal class MatchInputScreen : Screen
 				ImGui.Text(player.FullName);
 
 				ImGui.TableNextColumn();
-				ImGui.Text("0");
+				ImGui.Text(legStatistic.AverageTurnScore.ToString());
 
 				ImGui.TableNextColumn();
 				ImGui.Text(matchStatistic.SetsWon.ToString());
@@ -183,11 +183,12 @@ internal class MatchInputScreen : Screen
 		ImGuiExtensions.Spacing(1);
 
 		ImGui.BeginDisabled();
-		if (ImGui.BeginTable($"{player.FullName} Throws", (int)this.RuleEngine.ThrowsPerTurn + 2, ImGuiTableFlags.Borders))
+		if (ImGui.BeginTable($"{player.FullName} Throws", (int)this.RuleEngine.ThrowsPerTurn + 3, ImGuiTableFlags.Borders))
 		{
 			ImGui.TableSetupColumn("Turn");
 			for (int i = 0; i < this.RuleEngine.ThrowsPerTurn; i++)
 				ImGui.TableSetupColumn($"Dart {i + 1}");
+			ImGui.TableSetupColumn($"Score");
 			ImGui.TableSetupColumn($"Remaining");
 			ImGui.TableHeadersRow();
 
@@ -212,6 +213,12 @@ internal class MatchInputScreen : Screen
 
 					if (@throw != null)
 						ImGui.Text($"{this.MapThrowKindToPrefix(@throw.Kind)}{@throw.ThrownValue.ToString()}");
+				}
+
+				ImGui.TableNextColumn();
+				if (turn != null)
+				{
+					ImGui.Text(turn.Score.ToString());
 				}
 
 				ImGui.TableNextColumn();

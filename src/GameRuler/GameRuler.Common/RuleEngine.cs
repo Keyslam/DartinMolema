@@ -310,6 +310,7 @@ public class RuleEngine
 			var setStatistic = this.GetPlayerSetStatistic(player);
 			var legStatistic = this.GetPlayerLegStatistic(player);
 
+			matchStatistic.AverageScore = CalculateAverageIteratively(matchStatistic.AverageScore, setStatistic.AverageScore, matchStatistic.SetsPlayed);
 			matchStatistic.SetsPlayed += 1;
 
 			if (player == CurrentPlayer)
@@ -368,7 +369,7 @@ public class RuleEngine
 			CurrentPlayer.Statistic.OneEighties++;
 		}
 
-		var IsNineDarter = newRemainingPoints == 0 && legStatistic.PlayedTurns == 3;
+		var IsNineDarter = newRemainingPoints == 0 && legStatistic.PlayedTurns == 2;
 		if (IsNineDarter)
 		{
 			legStatistic.IsNineDarter = true;

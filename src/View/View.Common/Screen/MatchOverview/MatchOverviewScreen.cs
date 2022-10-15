@@ -76,7 +76,7 @@ internal class MatchOverviewScreen : Screen
 
 	public override void Update()
 	{
-		ImGui.Text("Match Overview");
+		ImGui.Text($"Match Overview - {Match.Name} - {Match.Id}");
 		ImGuiExtensions.Spacing(5);
 
 		ImGui.Text($"First to {Match.SetsToWin} sets wins the match");
@@ -114,14 +114,16 @@ internal class MatchOverviewScreen : Screen
 
 			foreach (var player in this.Players)
 			{
+				var matchStatistic = this.Match.Statistics[player.Id];
+
 				ImGui.TableNextColumn();
 				ImGui.Text(player.FullName);
 				ImGui.TableNextColumn();
-				ImGui.Text(player.Statistic.OneEighties.ToString());
+				ImGui.Text(matchStatistic.OneEighties.ToString());
 				ImGui.TableNextColumn();
-				ImGui.Text(player.Statistic.Ninedarters.ToString());
+				ImGui.Text(matchStatistic.Ninedarters.ToString());
 				ImGui.TableNextColumn();
-				ImGui.Text(player.Statistic.AverageTurnScore.ToString());
+				ImGui.Text(matchStatistic.AverageScore.ToString());
 			}
 			ImGui.EndTable();
 		}
@@ -139,14 +141,16 @@ internal class MatchOverviewScreen : Screen
 
 			foreach (var player in this.Players)
 			{
+				var setStatistic = this.Match.Sets[this.SelectedSet].Statistics[player.Id];
+
 				ImGui.TableNextColumn();
 				ImGui.Text(player.FullName);
 				ImGui.TableNextColumn();
-				ImGui.Text(this.Match.Sets[this.SelectedSet].Statistics[player.Id].OneEighties.ToString());
+				ImGui.Text(setStatistic.OneEighties.ToString());
 				ImGui.TableNextColumn();
-				ImGui.Text(this.Match.Sets[this.SelectedSet].Statistics[player.Id].Ninedarters.ToString());
+				ImGui.Text(setStatistic.Ninedarters.ToString());
 				ImGui.TableNextColumn();
-				ImGui.Text(this.Match.Sets[this.SelectedSet].Statistics[player.Id].AverageScore.ToString());
+				ImGui.Text(setStatistic.AverageScore.ToString());
 			}
 			ImGui.EndTable();
 		}
