@@ -6,13 +6,13 @@ namespace App.Repository.LocalRepository.Models;
 
 internal class Turn
 {
-	[JsonProperty("id")]
+	[JsonProperty("a")]
 	public Guid Id { get; set; }
 
-	[JsonProperty("score")]
+	[JsonProperty("b")]
 	public int Score { get; set; }
 
-	[JsonProperty("throws")]
+	[JsonProperty("c")]
 	public List<Throw> Throws { get; set; }
 
 	public Turn() { }

@@ -6,16 +6,16 @@ namespace App.Repository.LocalRepository.Models;
 
 internal class Leg
 {
-	[JsonProperty("id")]
+	[JsonProperty("a")]
 	public Guid Id { get; set; }
 
-	[JsonProperty("winner_id")]
+	[JsonProperty("b")]
 	public Guid WinnerId { get; set; }
 
-	[JsonProperty("turns")]
+	[JsonProperty("c")]
 	public Dictionary<Guid, List<Turn>> Turns { get; set; }
 
-	[JsonProperty("statistics")]
+	[JsonProperty("d")]
 	public Dictionary<Guid, PlayerLegStatistic> Statistics { get; set; }
 
 	public Leg() { }

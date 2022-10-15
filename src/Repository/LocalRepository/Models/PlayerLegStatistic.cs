@@ -6,19 +6,19 @@ namespace App.Repository.LocalRepository.Models;
 
 internal class PlayerLegStatistic
 {
-	[JsonProperty("one_eighties")]
+	[JsonProperty("a")]
 	public int OneEighties { get; set; }
 
-	[JsonProperty("is_nine_darter")]
+	[JsonProperty("b")]
 	public bool IsNineDarter { get; set; }
 
-	[JsonProperty("average_turn_score")]
+	[JsonProperty("c")]
 	public int AverageTurnScore { get; set; }
 
-	[JsonProperty("remaining_points")]
+	[JsonProperty("d")]
 	public int RemainingPoints { get; set; }
 
-	[JsonProperty("played_turns")]
+	[JsonProperty("e")]
 	public int PlayedTurns { get; set; }
 
 	public PlayerLegStatistic() { }

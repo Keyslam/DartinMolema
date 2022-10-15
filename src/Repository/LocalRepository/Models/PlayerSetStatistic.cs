@@ -6,19 +6,19 @@ namespace App.Repository.LocalRepository.Models;
 
 public class PlayerSetStatistic
 {
-	[JsonProperty("one_eighties")]
+	[JsonProperty("a")]
 	public int OneEighties { get; set; }
 
-	[JsonProperty("nine_darters")]
+	[JsonProperty("b")]
 	public int Ninedarters { get; set; }
 
-	[JsonProperty("average_score")]
+	[JsonProperty("c")]
 	public int AverageScore { get; set; }
 
-	[JsonProperty("legs_played")]
+	[JsonProperty("d")]
 	public int LegsPlayed { get; set; }
 
-	[JsonProperty("legs_won")]
+	[JsonProperty("e")]
 	public int LegsWon { get; set; }
 
 	public PlayerSetStatistic() { }

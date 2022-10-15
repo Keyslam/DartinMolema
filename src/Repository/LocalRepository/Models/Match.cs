@@ -6,37 +6,37 @@ namespace App.Repository.LocalRepository.Models;
 
 internal class Match
 {
-	[JsonProperty("id")]
+	[JsonProperty("a")]
 	public Guid Id { get; set; }
 
-	[JsonProperty("name")]
+	[JsonProperty("b")]
 	public string Name { get; set; }
 
-	[JsonProperty("date")]
+	[JsonProperty("c")]
 	public DateTime Date { get; set; }
 
-	[JsonProperty("players")]
+	[JsonProperty("d")]
 	public List<Guid> Players { get; set; }
 
-	[JsonProperty("winner_id")]
+	[JsonProperty("e")]
 	public Guid WinnerId { get; set; }
 
-	[JsonProperty("sets_to_win")]
+	[JsonProperty("f")]
 	public int SetsToWin { get; set; }
 
-	[JsonProperty("legs_to_win")]
+	[JsonProperty("g")]
 	public int LegsToWin { get; set; }
 
-	[JsonProperty("score_to_win")]
+	[JsonProperty("h")]
 	public int ScoreToWin { get; set; }
 
-	[JsonProperty("throws_per_turn")]
+	[JsonProperty("i")]
 	public int ThrowsPerTurn { get; set; }
 
-	[JsonProperty("sets")]
+	[JsonProperty("j")]
 	public List<Set> Sets { get; set; }
 
-	[JsonProperty("statistics")]
+	[JsonProperty("k")]
 	public Dictionary<Guid, PlayerMatchStatistic> Statistics { get; set; }
 
 	public Match() { }

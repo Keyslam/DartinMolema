@@ -6,22 +6,22 @@ namespace App.Repository.LocalRepository.Models;
 
 internal class Player
 {
-	[JsonProperty("id")]
+	[JsonProperty("a")]
 	public Guid Id { get; set; }
 
-	[JsonProperty("full_name")]
+	[JsonProperty("b")]
 	public string FullName { get; set; }
 
-	[JsonProperty("played_games")]
+	[JsonProperty("c")]
 	public List<Guid> PlayedGames { get; set; }
 
-	[JsonProperty("won_games")]
+	[JsonProperty("d")]
 	public List<Guid> WonGames { get; set; }
 
-	[JsonProperty("lost_games")]
+	[JsonProperty("e")]
 	public List<Guid> LostGames { get; set; }
 
-	[JsonProperty("statistic")]
+	[JsonProperty("f")]
 	public PlayerStatistic Statistic { get; set; }
 
 	public Player() { }

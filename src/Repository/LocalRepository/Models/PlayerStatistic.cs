@@ -6,16 +6,16 @@ namespace App.Repository.LocalRepository.Models;
 
 public class PlayerStatistic
 {
-	[JsonProperty("average_turn_score")]
+	[JsonProperty("a")]
 	public int AverageTurnScore { get; set; }
 
-	[JsonProperty("played_turns")]
+	[JsonProperty("b")]
 	public int PlayedTurns { get; set; }
 
-	[JsonProperty("one_eighties")]
+	[JsonProperty("c")]
 	public int OneEighties { get; set; }
 
-	[JsonProperty("nine_darters")]
+	[JsonProperty("d")]
 	public int Ninedarters { get; set; }
 
 	public PlayerStatistic() { }

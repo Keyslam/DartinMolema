@@ -6,16 +6,16 @@ namespace App.Repository.LocalRepository.Models;
 
 internal class Throw
 {
-	[JsonProperty("id")]
+	[JsonProperty("a")]
 	public Guid Id { get; set; }
 
-	[JsonProperty("thrown_value")]
+	[JsonProperty("b")]
 	public int ThrownValue { get; set; }
 
-	[JsonProperty("assigned_value")]
+	[JsonProperty("c")]
 	public int AssignedValue { get; set; }
 
-	[JsonProperty("kind")]
+	[JsonProperty("d")]
 	public App.Models.ThrowKind Kind { get; set; }
 
 	public Throw() { }
