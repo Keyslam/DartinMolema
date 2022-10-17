@@ -4,101 +4,71 @@ using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using ImGuiNET;
+using System.Numerics;
 
 namespace App.View;
 
 public class AppWindow
 {
 #pragma warning disable 8618
-    IWindow window;
-    IInputContext inputContext;
-    GL gl;
-    ImGuiController imGuiController;
-    ScreenNavigator screenNavigator;
+	IWindow window;
+	IInputContext inputContext;
+	GL gl;
+	ImGuiController imGuiController;
+	ScreenNavigator screenNavigator;
 #pragma warning restore 8618
 
-    public void Run()
-    {
-        var windowOptions = WindowOptions.Default;
-        windowOptions.Size = new Vector2D<int>(1920, 1080);
-        windowOptions.Title = "DartApp";
+	public void Run()
+	{
+		var windowOptions = WindowOptions.Default;
+		windowOptions.Size = new Vector2D<int>(1600, 900);
+		windowOptions.Title = "Dartin Molema";
 
-        window = Window.Create(windowOptions);
-        window.Load += OnWindowLoad;
-        window.Update += OnWindowUpdate;
-        window.Render += OnWindowRender;
+		window = Window.Create(windowOptions);
+		window.Load += OnWindowLoad;
+		window.Update += OnWindowUpdate;
+		window.Render += OnWindowRender;
 
-        window.Run();
+		window.Run();
+	}
 
-        void OnWindowLoad()
-        {
-            inputContext = window.CreateInput();
-            gl = window.CreateOpenGL();
-            imGuiController = new ImGuiController(gl, window, inputContext);
-            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
-            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
+	private void OnWindowLoad()
+	{
+		inputContext = window.CreateInput();
+		gl = window.CreateOpenGL();
+		imGuiController = new ImGuiController(gl, window, inputContext);
+		ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+		ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
 
-            var dependencyContainer = new DependencyContainer();
-            this.screenNavigator = dependencyContainer.GetScreenNavigator();
+		var dependencyContainer = new DependencyContainer();
+		this.screenNavigator = dependencyContainer.GetScreenNavigator();
 
+		this.screenNavigator.Push(dependencyContainer.MakeMainScreen());
+	}
 
-            // var matchFactory = new MatchFactory();
-            // var match = matchFactory.CreateDefault();
-            // var ruleEngine = new RuleEngine(match);
-            // this.screenNavigator.Push(new GameInput(ruleEngine));
-
-            // var playerRepository = new PlayerRepository();
-
-            // var playerA = new Player();
-            // playerA.Id = Guid.NewGuid();
-            // playerA.FullName = "Jane Doe";
-            // playerA.PlayedGames = new List<Guid>();
-            // playerA.Lossess = 0;
-            // playerA.Wins = 0;
-
-            // playerRepository.Save(playerA);
-
-            // var playerB = new Player();
-            // playerB.Id = Guid.NewGuid();
-            // playerB.FullName = "John Doe";
-            // playerB.PlayedGames = new List<Guid>();
-            // playerB.Lossess = 0;
-            // playerB.Wins = 0;
-
-            // playerRepository.Save(playerB);
-
-            this.screenNavigator.Push(dependencyContainer.MakeMainScreen());
-        }
-
-        void OnWindowUpdate(double dt)
-        {
-            imGuiController.Update((float)dt);
-
-            ImGui.DockSpaceOverViewport(ImGui.GetMainViewport());
-
-            if (ImGui.Begin("Test", ImGuiWindowFlags.NoTitleBar))
-            {
-                ImGui.Text("Dartin Molema");
-                ImGui.Spacing();
-                ImGui.Separator();
-                ImGui.Spacing();
-
-                var topScreen = this.screenNavigator.GetTopScreen();
-                topScreen.Update();
-            }
-        }
+	private void OnWindowUpdate(double dt)
+	{
+		imGuiController.Update((float)dt);
 
 
-        void OnWindowRender(double dt)
-        {
-            gl.Clear(ClearBufferMask.ColorBufferBit);
+		ImGui.SetNextWindowPos(new Vector2(0, 0));
+		ImGui.SetNextWindowSize(new Vector2(1600, 900));
+		if (ImGui.Begin("Main Window", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize))
+		{
+			var topScreen = this.screenNavigator.GetTopScreen();
+			topScreen.Update();
+		}
+	}
 
-            imGuiController.Render();
-        }
-    }
+	private void OnWindowRender(double dt)
+	{
+		gl.Clear(ClearBufferMask.ColorBufferBit);
 
-    public void Quit()
-    {
-        window.Close();
-    }
+		imGuiController.Render();
+	}
+
+	private void Quit()
+	{
+		window.Close();
+	}
 }

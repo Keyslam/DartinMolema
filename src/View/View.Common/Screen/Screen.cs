@@ -1,17 +1,15 @@
-using App.View;
-
 namespace App.View;
 
 internal abstract class Screen
 {
-    protected DependencyContainer DependencyContainer { get; }
-    protected ScreenNavigator ScreenNavigator { get; }
+	protected DependencyContainer DependencyContainer { get; }
+	protected ScreenNavigator ScreenNavigator { get; }
 
-    public Screen(DependencyContainer dependencyContainer)
-    {
-        this.DependencyContainer = dependencyContainer;
-        this.ScreenNavigator = dependencyContainer.GetScreenNavigator();
-    }
+	public Screen(DependencyContainer dependencyContainer)
+	{
+		this.DependencyContainer = dependencyContainer;
+		this.ScreenNavigator = dependencyContainer.GetScreenNavigator();
+	}
 
-    public abstract void Update();
+	public abstract void Update();
 }

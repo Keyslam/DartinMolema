@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text;
 using App.Core;
 using App.Models;
@@ -8,86 +9,90 @@ namespace App.View;
 
 internal class PlayerOverviewScreen : Screen
 {
-    private readonly IPlayerRepository playerRepository;
+	private IPlayerRepository PlayerRepository { get; }
 
-    private IReadOnlyList<Match> matches;
-    private string[] matchTitles;
+	private IReadOnlyList<Match> Matches { get; }
+	private string[] MatchTitles { get; }
 
-    private Player player;
+	private Player Player { get; }
 
-    private int selectedMatch;
+	private int SelectedMatch { get; set; }
 
-    public PlayerOverviewScreen(Player player, DependencyContainer dependencyContainer) : base(dependencyContainer)
-    {
-        this.playerRepository = dependencyContainer.GetPlayerRepository();
+	public PlayerOverviewScreen(Player player, DependencyContainer dependencyContainer) : base(dependencyContainer)
+	{
+		this.PlayerRepository = dependencyContainer.GetPlayerRepository();
 
-        this.matches = player.PlayedGames.Select(matchId => dependencyContainer.GetMatchRepository().Read(matchId)!).ToList();
+		this.Matches = player.PlayedGames.Select(matchId => dependencyContainer.GetMatchRepository().Read(matchId)!).ToList();
 
-        this.matchTitles = new string[this.matches.Count()];
-        for (var i = 0; i < this.matches.Count(); ++i)
-            this.matchTitles[i] = MakeMatchTitle(this.matches[i]);
+		this.MatchTitles = new string[this.Matches.Count];
+		for (var i = 0; i < this.Matches.Count; i++)
+			this.MatchTitles[i] = this.Matches[i].Name;
 
-        this.player = player;
-        this.selectedMatch = 0;
-    }
+		this.Player = player;
+		this.SelectedMatch = 0;
+	}
 
-    public override void Update()
-    {
-        ImGui.Text($"Player Overview: {player.FullName}");
+	public override void Update()
+	{
+		ImGui.Text($"Player Overview: {Player.FullName}");
 
-        ImGuiExtensions.Spacing(5);
+		ImGuiExtensions.Spacing(5);
 
-        if (ImGui.TreeNodeEx("Statistics", ImGuiTreeNodeFlags.DefaultOpen))
-        {
-            if (ImGui.TreeNodeEx("Matches", ImGuiTreeNodeFlags.DefaultOpen))
-            {
-                ImGui.Text($"Matches Played: {this.matches.Count()}");
-                ImGui.Text($"Matches Won: {this.player.Wins}");
-                ImGui.Text($"Matches Lost: {this.player.Lossess}");
+		if (ImGui.TreeNodeEx("Statistics", ImGuiTreeNodeFlags.DefaultOpen))
+		{
+			if (ImGui.TreeNodeEx("Matches", ImGuiTreeNodeFlags.DefaultOpen))
+			{
+				ImGui.Text($"Matches Played: {this.Matches.Count()}");
+				ImGui.Text($"Matches Won: {this.Player.WonGames.Count}");
+				ImGui.Text($"Matches Lost: {this.Player.LostGames.Count}");
 
-                ImGui.TreePop();
-            }
+				ImGui.TreePop();
+			}
 
-            if (ImGui.TreeNodeEx("Throws", ImGuiTreeNodeFlags.DefaultOpen))
-            {
-                ImGui.Text($"9 darters: {this.player.Ninedarters}");
-                ImGui.Text($"180's: {this.player.Tripledarts}");
+			if (ImGui.TreeNodeEx("Throws", ImGuiTreeNodeFlags.DefaultOpen))
+			{
+				ImGui.Text($"9 darters: {this.Player.Statistic.Ninedarters}");
+				ImGui.Text($"180's: {this.Player.Statistic.OneEighties}");
 
-                ImGui.TreePop();
-            }
+				ImGui.TreePop();
+			}
 
-            ImGui.TreePop();
-        }
+			ImGui.TreePop();
+		}
 
-        ImGui.NewLine();
+		ImGui.NewLine();
 
-        ImGui.Text("Matches");
+		ImGui.Text("Matches");
 
-        if (ImGui.ListBox("", ref this.selectedMatch, this.matchTitles, this.matchTitles.Count(), 20))
-            this.ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(this.matches[this.selectedMatch]));
+		var selectedMatch = this.SelectedMatch;
+		if (ImGui.ListBox("", ref selectedMatch, this.MatchTitles, this.MatchTitles.Count(), 20))
+		{
+			this.SelectedMatch = selectedMatch;
+			this.ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(this.Matches[this.SelectedMatch]));
+		}
 
-        ImGui.NewLine();
+		ImGui.NewLine();
 
-        if (ImGuiExtensions.Button("Back"))
-            this.ScreenNavigator.Pop();
-    }
+		if (ImGuiExtensions.Button("Back", new Vector2(120, 0)))
+			this.ScreenNavigator.Pop();
+	}
 
-    private string MakeMatchTitle(Match match)
-    {
-        var titleBuilder = new StringBuilder();
+	private string MakeMatchTitle(Match match)
+	{
+		var titleBuilder = new StringBuilder();
 
-        for (int i = 0; i < match.Players.Count; i++)
-        {
-            if (i != 0)
-                titleBuilder.Append(" vs ");
+		for (int i = 0; i < match.Players.Count; i++)
+		{
+			if (i != 0)
+				titleBuilder.Append(" vs ");
 
-            string playerName = this.playerRepository.Read(match.Players[i])?.FullName ?? "Unknown Player";
-            titleBuilder.Append(playerName);
-        }
+			string playerName = this.PlayerRepository.Read(match.Players[i])?.FullName ?? "Unknown Player";
+			titleBuilder.Append(playerName);
+		}
 
-        titleBuilder.Append(" | ");
-        titleBuilder.Append(match.Date.ToString("dd-MM-yyyy HH:mm"));
+		titleBuilder.Append(" | ");
+		titleBuilder.Append(match.Date.ToString("dd-MM-yyyy HH:mm"));
 
-        return titleBuilder.ToString();
-    }
+		return titleBuilder.ToString();
+	}
 }

@@ -9,81 +9,84 @@ namespace App.View;
 
 internal class MatchesOverviewScreen : Screen
 {
+	private IMatchRepository MatchRepository { get; }
+	private IPlayerRepository PlayerRepository { get; }
 
-    private readonly IMatchRepository matchRepository;
-    private readonly IPlayerRepository playerRepository;
+	private Dictionary<Guid, string> MatchTitles { get; }
 
-    private IReadOnlyList<Match> matches;
-    private Dictionary<Match, string> matchTitles;
+	private string SearchInput { get; set; } = "";
 
-    private string searchInput = "";
+	private int SelectedIndex { get; set; } = 0;
 
-    private int selectedIndex = 0;
+	public MatchesOverviewScreen(DependencyContainer dependencyContainer) : base(dependencyContainer)
+	{
+		this.MatchRepository = dependencyContainer.GetMatchRepository();
+		this.PlayerRepository = dependencyContainer.GetPlayerRepository();
 
-    public MatchesOverviewScreen(DependencyContainer dependencyContainer) : base(dependencyContainer)
-    {
-        this.matchRepository = dependencyContainer.GetMatchRepository();
-        this.playerRepository = dependencyContainer.GetPlayerRepository();
+		var matchNames = this.MatchRepository.ReadAllNames();
+		this.MatchTitles = new Dictionary<Guid, string>();
+		foreach (var (id, name) in matchNames)
+		{
+			this.MatchTitles[id] = name;
+		}
+	}
 
-        this.matches = matchRepository.ReadAll();
-        this.matchTitles = new Dictionary<Match, string>();
-        foreach (var match in matches)
-            this.matchTitles[match] = MakeMatchTitle(match);
-    }
+	public override void Update()
+	{
+		ImGui.Text("Matches Overview");
 
-    public override void Update()
-    {
-        ImGui.Text("Matches Overview");
+		ImGuiExtensions.Spacing(5);
 
-        ImGuiExtensions.Spacing(5);
+		var searchInput = this.SearchInput;
+		if (ImGui.InputText("Searchbar", ref searchInput, 255))
+			SearchInput = SearchInput.ToLower();
+		this.SearchInput = searchInput;
 
-        if (ImGui.InputText("Searchbar", ref searchInput, 255))
-            searchInput = searchInput.ToLower();
+		ImGuiExtensions.Spacing(3);
 
-        ImGuiExtensions.Spacing(3);
+		if (ImGui.BeginChild("Matches", new Vector2(0, 250), true, ImGuiWindowFlags.HorizontalScrollbar))
+		{
+			var i = 0;
+			foreach (var (id, name) in this.MatchTitles)
+			{
+				if (!name.ToLower().Contains(SearchInput)) continue;
 
-        if (ImGui.BeginChild("Matches", new Vector2(0, 250), true, ImGuiWindowFlags.HorizontalScrollbar))
-        {
-            for (int i = 0; i < matches.Count; i++)
-            {
-                string matchTitle = matchTitles[matches[i]];
+				if (ImGui.Selectable(name, i == SelectedIndex))
+				{
+					SelectedIndex = i;
+					var match = MatchRepository.Read(id)!;
+					this.ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(match));
+				}
 
-                if (!matchTitle.ToLower().Contains(searchInput)) continue;
+				i++;
+			}
 
-                if (ImGui.Selectable(matchTitle, i == selectedIndex))
-                {
-                    selectedIndex = i;
-                    this.ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(matches[i]));
-                }
-            }
+			ImGui.EndChild();
+		}
 
-            ImGui.EndChild();
-        }
+		ImGuiExtensions.Spacing(3);
 
-        ImGuiExtensions.Spacing(3);
+		if (ImGuiExtensions.Button("Back", new Vector2(120, 0)))
+			this.ScreenNavigator.PopToRoot();
+	}
 
-        if (ImGuiExtensions.Button("Back"))
-            this.ScreenNavigator.PopToRoot();
+	private string MakeMatchTitle(Match match)
+	{
+		var titleBuilder = new StringBuilder();
 
-    }
+		for (int i = 0; i < match.Players.Count; i++)
+		{
+			if (i != 0)
+				titleBuilder.Append(" vs ");
 
-    private string MakeMatchTitle(Match match)
-    {
-        var titleBuilder = new StringBuilder();
+			string playerName = this.PlayerRepository.Read(match.Players[i])?.FullName ?? "Unknown Player";
+			titleBuilder.Append(playerName);
+		}
 
-        for (int i = 0; i < match.Players.Count; i++)
-        {
-            if (i != 0)
-                titleBuilder.Append(" vs ");
+		titleBuilder.Append(" | ");
+		titleBuilder.Append(match.Date.ToString("dd-MM-yyyy HH:mm"));
 
-            string playerName = this.playerRepository.Read(match.Players[i])?.FullName ?? "Unknown Player";
-            titleBuilder.Append(playerName);
-        }
-
-        titleBuilder.Append(" | ");
-        titleBuilder.Append(match.Date.ToString("dd-MM-yyyy HH:mm"));
-
-        return titleBuilder.ToString();
-    }
+		return titleBuilder.ToString();
+	}
 
 }

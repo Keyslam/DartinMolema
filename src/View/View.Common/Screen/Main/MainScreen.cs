@@ -1,27 +1,32 @@
+using System.Numerics;
 using App.Core;
-using App.View;
 using ImGuiNET;
 
 namespace App.View;
 
 internal class MainScreen : Screen
 {
-    public MainScreen(DependencyContainer dependencyContainer) : base(dependencyContainer)
-    {
-    }
+	private ImGuiExtensions.FireOnce SelectNewGame { get; }
 
-    public override void Update()
-    {
-        if (ImGuiExtensions.Button("New Game"))
-            this.ScreenNavigator.Push(this.DependencyContainer.MakeNewMatchScreen());
+	public MainScreen(DependencyContainer dependencyContainer) : base(dependencyContainer)
+	{
+		this.SelectNewGame = new ImGuiExtensions.FireOnce(true);
+	}
 
-        if (ImGuiExtensions.Button("Players Overview"))
-            this.ScreenNavigator.Push(this.DependencyContainer.MakePlayersOverviewScreen());
+	public override void Update()
+	{
+		if (SelectNewGame.Consume())
+			ImGui.SetKeyboardFocusHere();
+		if (ImGuiExtensions.Button("New Game", new Vector2(120, 0)))
+			this.ScreenNavigator.Push(this.DependencyContainer.MakeNewMatchScreen());
 
-        if (ImGuiExtensions.Button("Matches Overview"))
-            this.ScreenNavigator.Push(this.DependencyContainer.MakeMatchesOverviewScreen());
+		if (ImGuiExtensions.Button("Players Overview", new Vector2(120, 0)))
+			this.ScreenNavigator.Push(this.DependencyContainer.MakePlayersOverviewScreen());
 
-        ImGui.Button("Match Overview");
-        ImGui.Button("Import Match");
-    }
+		if (ImGuiExtensions.Button("Matches Overview", new Vector2(120, 0)))
+			this.ScreenNavigator.Push(this.DependencyContainer.MakeMatchesOverviewScreen());
+
+		if (Environment.GetCommandLineArgs().ToList().Contains("--datagenerator") && ImGuiExtensions.Button("Generate Testdata"))
+			this.ScreenNavigator.Push(this.DependencyContainer.MakeNewTestdataGeneratorScreen());
+	}
 }

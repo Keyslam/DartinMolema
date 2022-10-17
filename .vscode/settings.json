@@ -4,7 +4,13 @@
         "editor.formatOnType": true,
         "editor.formatOnPaste": true,
         "editor.formatOnSave": true,
-        "editor.formatOnSaveMode": "file"
+        "editor.formatOnSaveMode": "file",
+
+        "editor.tabSize": 4,
+        "editor.insertSpaces": false,
+        "editor.autoIndent": "advanced",
+        "editor.detectIndentation": false,
+        // "editor.renderWhitespace": "all", 
     },
     "files.exclude": {
         "**/bin": true,

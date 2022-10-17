@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\Repository\Repository.Common\Repository.Common.csproj" />
     <ProjectReference Include="..\..\Builder\Builder.Common\Builder.Common.csproj" />
     <ProjectReference Include="..\..\Repository\LocalRepository\LocalRepository.csproj" />
+    <ProjectReference Include="..\..\Repository\Caching\Caching.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,74 +5,81 @@ namespace App.Repository.LocalRepository;
 
 public class MatchRepository : IMatchRepository
 {
-    public void Save(App.Models.Match match)
-    {
-        Directory.CreateDirectory(this.GetBaseDirectory());
+	public void Save(App.Models.Match match)
+	{
+		Directory.CreateDirectory(this.GetBaseDirectory());
 
-        var filepath = this.MatchToFilepath(match);
+		var filepath = this.MatchToFilepath(match);
 
-        var jsonMatch = new Match(match);
-        var serializedObject = JsonConvert.SerializeObject(jsonMatch);
+		var jsonMatch = new Match(match);
+		var serializedObject = JsonConvert.SerializeObject(jsonMatch);
 
-        File.WriteAllText(filepath, serializedObject);
-    }
+		File.WriteAllText(filepath, serializedObject);
+	}
 
-    public App.Models.Match? Read(Guid id)
-    {
-        Directory.CreateDirectory(this.GetBaseDirectory());
+	public App.Models.Match? Read(Guid id)
+	{
+		Directory.CreateDirectory(this.GetBaseDirectory());
 
-        var filepath = IdToFilepath(id);
+		var filepath = IdToFilepath(id);
 
-        return ReadFromFile(filepath);
-    }
+		return ReadFromFile(filepath);
+	}
 
-    private App.Models.Match? ReadFromFile(string filepath)
-    {
-        Directory.CreateDirectory(this.GetBaseDirectory());
+	private App.Models.Match? ReadFromFile(string filepath)
+	{
+		Directory.CreateDirectory(this.GetBaseDirectory());
 
-        var serializedObject = File.ReadAllText(filepath);
-        var jsonMatch = JsonConvert.DeserializeObject<Match>(serializedObject);
+		var serializedObject = File.ReadAllText(filepath);
+		var jsonMatch = JsonConvert.DeserializeObject<Match>(serializedObject);
 
-        if (jsonMatch == null)
-            return null;
+		if (jsonMatch == null)
+			return null;
 
-        var match = jsonMatch.ToReal();
+		var match = jsonMatch.ToReal();
 
-        return match;
-    }
+		return match;
+	}
 
-    public IReadOnlyList<App.Models.Match> ReadAll()
-    {
-        Directory.CreateDirectory(this.GetBaseDirectory());
+	public IReadOnlyList<App.Models.Match> ReadAll()
+	{
+		Directory.CreateDirectory(this.GetBaseDirectory());
 
-        var files = Directory.GetFiles(this.GetBaseDirectory());
-        var matches = new List<App.Models.Match>();
+		var files = Directory.GetFiles(this.GetBaseDirectory());
+		var matches = new List<App.Models.Match>();
 
-        foreach (var file in files)
-        {
-            var match = this.ReadFromFile(file);
+		foreach (var file in files)
+		{
+			var match = this.ReadFromFile(file);
 
-            if (match == null)
-                continue;
+			if (match == null)
+				continue;
 
-            matches.Add(match);
-        }
+			matches.Add(match);
+		}
 
-        return matches;
-    }
+		return matches;
+	}
 
-    private string GetBaseDirectory()
-    {
-        return $"{Environment.CurrentDirectory}/Data/Matches";
-    }
+	public IReadOnlyList<(Guid, string)> ReadAllNames()
+	{
+		return this.ReadAll().Select(match => (match.Id, match.Name)).ToList();
+	}
 
-    private string MatchToFilepath(App.Models.Match match)
-    {
-        return this.IdToFilepath(match.Id);
-    }
+	private string GetBaseDirectory()
+	{
+		return $"{Environment.CurrentDirectory}/Data/Matches";
+	}
 
-    private string IdToFilepath(Guid id)
-    {
-        return $"{this.GetBaseDirectory()}/{id}.json";
-    }
+	private string MatchToFilepath(App.Models.Match match)
+	{
+		return this.IdToFilepath(match.Id);
+	}
+
+	private string IdToFilepath(Guid id)
+	{
+		return $"{this.GetBaseDirectory()}/{id}.json";
+	}
+
+
 }

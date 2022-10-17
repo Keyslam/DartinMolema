@@ -6,52 +6,47 @@ namespace App.Repository.LocalRepository.Models;
 
 internal class Player
 {
-    [JsonProperty("id")]
-    public Guid Id { get; set; }
+	[JsonProperty("a")]
+	public Guid Id { get; set; }
 
-    [JsonProperty("full_name")]
-    public string FullName { get; set; }
+	[JsonProperty("b")]
+	public string FullName { get; set; }
 
-    [JsonProperty("played_games")]
-    public List<Guid> PlayedGames { get; set; }
+	[JsonProperty("c")]
+	public List<Guid> PlayedGames { get; set; }
 
-    [JsonProperty("wins")]
-    public uint Wins { get; set; }
+	[JsonProperty("d")]
+	public List<Guid> WonGames { get; set; }
 
-    [JsonProperty("lossess")]
-    public uint Lossess { get; set; }
+	[JsonProperty("e")]
+	public List<Guid> LostGames { get; set; }
 
-    [JsonProperty("tripledarts")]
-    public uint Tripledarts { get; set; }
+	[JsonProperty("f")]
+	public PlayerStatistic Statistic { get; set; }
 
-    [JsonProperty("ninedarters")]
-    public uint Ninedarters { get; set; }
+	public Player() { }
 
-    public Player() { }
+	public Player(App.Models.Player player)
+	{
+		this.Id = player.Id;
+		this.FullName = player.FullName;
+		this.PlayedGames = player.PlayedGames;
+		this.WonGames = player.WonGames;
+		this.LostGames = player.LostGames;
+		this.Statistic = new PlayerStatistic(player.Statistic);
+	}
 
-    public Player(App.Models.Player player)
-    {
-        this.Id = player.Id;
-        this.FullName = player.FullName;
-        this.PlayedGames = player.PlayedGames;
-        this.Wins = player.Wins;
-        this.Lossess = player.Lossess;
-        this.Tripledarts = player.Tripledarts;
-        this.Ninedarters = player.Ninedarters;
-    }
+	public App.Models.Player ToReal()
+	{
+		var player = new App.Models.Player();
 
-    public App.Models.Player ToReal()
-    {
-        var player = new App.Models.Player();
+		player.Id = this.Id;
+		player.FullName = this.FullName;
+		player.PlayedGames = this.PlayedGames;
+		player.WonGames = this.WonGames;
+		player.LostGames = this.LostGames;
+		player.Statistic = this.Statistic.ToReal();
 
-        player.Id = this.Id;
-        player.FullName = this.FullName;
-        player.PlayedGames = this.PlayedGames;
-        player.Wins = this.Wins;
-        player.Lossess = this.Lossess;
-        player.Tripledarts = this.Tripledarts;
-        player.Ninedarters = this.Ninedarters;
-
-        return player;
-    }
+		return player;
+	}
 }
