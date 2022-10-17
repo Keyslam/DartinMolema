@@ -9,7 +9,6 @@ namespace App.View;
 
 internal class MatchOverviewScreen : Screen
 {
-    private IMatchRepository MatchRepository { get; }
     private IPlayerRepository PlayerRepository { get; }
     private Match Match { get; }
 
@@ -31,7 +30,6 @@ internal class MatchOverviewScreen : Screen
 
     public MatchOverviewScreen(Match match, DependencyContainer dependencyContainer) : base(dependencyContainer)
     {
-        this.MatchRepository = dependencyContainer.GetMatchRepository();
         this.PlayerRepository = dependencyContainer.GetPlayerRepository();
         this.Match = match;
 
