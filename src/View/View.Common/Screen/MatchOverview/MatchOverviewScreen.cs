@@ -78,7 +78,7 @@ internal class MatchOverviewScreen : Screen
         ImGuiExtensions.Spacing(5);
 
         ImGui.Text($"First to {Match.SetsToWin} sets wins the match");
-        ImGui.Text($"First to {Match.LegsToWin} legs wins the match");
+        ImGui.Text($"First to {Match.LegsToWin} legs wins the set");
         ImGuiExtensions.Spacing(3);
 
         if (this.Winner != null)
