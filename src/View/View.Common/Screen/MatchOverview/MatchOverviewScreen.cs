@@ -82,7 +82,7 @@ internal class MatchOverviewScreen : Screen
         ImGuiExtensions.Spacing(3);
 
         if (this.Winner != null)
-            ImGui.Text($"Winner: {this.Winner.FullName}");
+            ImGui.Text($"Match winner: {this.Winner.FullName}");
         else
             ImGui.Text("Match still in progress");
 
@@ -96,6 +96,13 @@ internal class MatchOverviewScreen : Screen
             }
             ImGui.EndCombo();
         }
+
+        ImGuiExtensions.Spacing(3);
+
+        if (this.Match.Sets[this.SelectedSet].WinnerId != Guid.Empty)
+            ImGui.Text($"Set winner: {PlayerRepository.Read(this.Match.Sets[this.SelectedSet].WinnerId)!.FullName}");
+        else
+            ImGui.Text("Set still in progress");
 
         ImGuiExtensions.Spacing(3);
 
