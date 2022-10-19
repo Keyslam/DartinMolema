@@ -13,15 +13,18 @@ internal class Player
 	public string FullName { get; set; }
 
 	[JsonProperty("c")]
-	public List<Guid> PlayedGames { get; set; }
+	public string Country { get; set; }
 
 	[JsonProperty("d")]
-	public List<Guid> WonGames { get; set; }
+	public List<Guid> PlayedGames { get; set; }
 
 	[JsonProperty("e")]
-	public List<Guid> LostGames { get; set; }
+	public List<Guid> WonGames { get; set; }
 
 	[JsonProperty("f")]
+	public List<Guid> LostGames { get; set; }
+
+	[JsonProperty("g")]
 	public PlayerStatistic Statistic { get; set; }
 
 	public Player() { }
@@ -30,6 +33,7 @@ internal class Player
 	{
 		this.Id = player.Id;
 		this.FullName = player.FullName;
+		this.Country = player.Country;
 		this.PlayedGames = player.PlayedGames;
 		this.WonGames = player.WonGames;
 		this.LostGames = player.LostGames;
@@ -42,6 +46,7 @@ internal class Player
 
 		player.Id = this.Id;
 		player.FullName = this.FullName;
+		player.Country = this.Country;
 		player.PlayedGames = this.PlayedGames;
 		player.WonGames = this.WonGames;
 		player.LostGames = this.LostGames;
