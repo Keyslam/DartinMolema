@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Model\Model.Common\Model.Common.csproj" />
     <ProjectReference Include="..\..\Repository\Repository.Common\Repository.Common.csproj" />
+    <ProjectReference Include="..\..\Model\Model.Common\Model.Common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>App.GameRuler.Common</AssemblyName>
+    <AssemblyName>App.ReferenceLoader</AssemblyName>
   </PropertyGroup>
 
 </Project>

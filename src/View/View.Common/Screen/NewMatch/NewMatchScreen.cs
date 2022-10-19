@@ -86,20 +86,7 @@ internal class NewMatchScreen : Screen
 
 			if (ImGuiExtensions.Button("Save"))
 			{
-				Player player = new Player()
-				{
-					Id = Guid.NewGuid(),
-					FullName = this.PlayerName,
-					LostGames = new List<Guid>(),
-					WonGames = new List<Guid>(),
-					PlayedGames = new List<Guid>(),
-					Statistic = new PlayerStatistic()
-					{
-						AverageTurnScore = 0,
-						Ninedarters = 0,
-						OneEighties = 0,
-					}
-				};
+				Player player = new Player(this.PlayerName);
 
 				if (!this.Players.ToList().Any(x => x.FullName == player.FullName))
 				{
@@ -195,7 +182,7 @@ internal class NewMatchScreen : Screen
 		if (this.SelectedPlayers[playerIndex] != null)
 			this.MatchBuilder.RemovePlayer(this.SelectedPlayers[playerIndex]);
 		this.SelectedPlayers[playerIndex] = player;
-		this.MatchBuilder.AddPlayer(player.Id);
+		this.MatchBuilder.AddPlayer(player);
 	}
 
 	private void DateTimeSelector()
@@ -272,7 +259,7 @@ internal class NewMatchScreen : Screen
 			return;
 		}
 
-		var match = this.MatchBuilder.Build(this.DependencyContainer.GetPlayerRepository());
+		var match = this.MatchBuilder.Build();
 		this.ScreenNavigator.Push(this.DependencyContainer.MakeMatchInputScreen(match));
 	}
 }
