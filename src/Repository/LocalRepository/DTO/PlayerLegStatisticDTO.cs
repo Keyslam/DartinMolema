@@ -12,7 +12,7 @@ internal class PlayerLegStatisticDTO
 	public bool IsNineDarter { get; set; }
 
 	[JsonProperty("c")]
-	public int AverageTurnScore { get; set; }
+	public double AverageTurnScore { get; set; }
 
 	[JsonProperty("d")]
 	public int PlayedTurns { get; set; }

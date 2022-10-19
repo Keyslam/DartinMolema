@@ -9,7 +9,7 @@ public class SetTests
 		var mock = new Moq.Mock<Set>();
 
 		mock.CallBase = true;
-		mock.Setup(x => x.CreateLeg(0)).Returns(() =>
+		mock.Setup(x => x.CreateLeg(0, 0)).Returns(() =>
 		{
 			var legMock = new Moq.Mock<Leg>();
 			legMock.Setup(x => x.CurrentPlayerIndex).Returns(0);

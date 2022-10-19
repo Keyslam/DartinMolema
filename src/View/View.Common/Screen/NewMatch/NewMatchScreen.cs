@@ -128,7 +128,6 @@ internal class NewMatchScreen : Screen
 		{
 			this.SetsToWinInput = Math.Clamp(setsToWinInput, 1, 100);
 			this.MatchBuilder.SetsToWin = this.SetsToWinInput;
-			Console.WriteLine(this.MatchBuilder.SetsToWin);
 		}
 
 		var legsToWinInput = this.LegsToWinInput;

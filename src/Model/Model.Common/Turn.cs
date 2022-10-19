@@ -44,7 +44,10 @@ public class Turn : ITurn
 
 	public bool IsValidLastTurn()
 	{
-		var lastThrow = this.Throws.Last();
+		var lastThrow = this.Throws
+			.Where(@throw => @throw.Kind != ThrowKind.None)
+			.Last();
+
 		return lastThrow.IsValidLastThrow();
 	}
 }

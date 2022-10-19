@@ -7,7 +7,7 @@ public class Match
 
 	public DateTime Date { get; set; }
 
-	public List<Reference<Player>> Players { get; set; }
+	public List<Guid> Players { get; set; }
 	public int WinnerIndex { get; set; }
 
 	public MatchRules MatchRules { get; }
@@ -18,30 +18,41 @@ public class Match
 	public bool IsDone => this.WinnerIndex != -1;
 	public Set CurrentSet => this.Sets.Last();
 
-	public Match(string name, DateTime date, IEnumerable<Reference<Player>> players, MatchRules matchRules)
+	public Match(string name, DateTime date, IEnumerable<Guid> players, MatchRules matchRules)
 	{
 		this.Id = Guid.NewGuid();
 		this.Name = name;
 		this.Date = date;
-		this.Players = new List<Reference<Player>>(players);
+		this.Players = new List<Guid>(players);
 		this.WinnerIndex = -1;
 		this.MatchRules = matchRules;
 		this.Sets = new List<Set>();
-		this.Statistics = new List<PlayerMatchStatistic>();
+		this.Statistics = Enumerable
+			.Repeat(() => new PlayerMatchStatistic(), this.Players.Count)
+			.Select(x => x())
+			.ToList();
 
-		this.Sets.Add(new Set(this.Players.Count));
+		this.Sets.Add(new Set(this.Players.Count, 0));
 	}
 
-	public Match(Guid id, string name, DateTime date, IEnumerable<Reference<Player>> players, int winnerIndex, MatchRules matchRules, IEnumerable<Set> sets, List<PlayerMatchStatistic> statistics)
+	public Match(Guid id, string name, DateTime date, IEnumerable<Guid> players, int winnerIndex, MatchRules matchRules, IEnumerable<Set> sets, List<PlayerMatchStatistic> statistics)
 	{
 		this.Id = id;
 		this.Name = name;
 		this.Date = date;
-		this.Players = new List<Reference<Player>>(players);
+		this.Players = new List<Guid>(players);
 		this.WinnerIndex = winnerIndex;
 		this.MatchRules = matchRules;
 		this.Sets = new List<Set>(sets);
 		this.Statistics = new List<PlayerMatchStatistic>(statistics);
+	}
+
+	public int GetRemainingPointsAfterTurn(Turn turn)
+	{
+		if (this.IsDone)
+			throw new InvalidOperationException("Match is already done");
+
+		return this.CurrentSet.GetRemainingPointsAfterTurn(this.MatchRules.SetRules, turn);
 	}
 
 	public void PlayTurn(Turn turn)
@@ -54,10 +65,21 @@ public class Match
 		this.CurrentSet.PlayTurn(this.MatchRules.SetRules, turn);
 		var points = turn.AssignedPoints;
 
+		this.Statistics[currentPlayerIndex].PlayTurn(points);
+
 		if (this.CurrentSet.IsDone)
 		{
 			foreach (var statistic in this.Statistics)
-				statistic.PlaySet(currentPlayerIndex == CurrentSet.WinnerIndex);
+			{
+				var index = this.Statistics.IndexOf(statistic);
+
+				var nineDarters = this.CurrentSet.Legs
+					.Select(leg => leg.Statistics[index])
+					.Where(statistic => statistic.IsNineDarter)
+					.Count();
+
+				statistic.PlaySet(index == CurrentSet.WinnerIndex, nineDarters);
+			}
 
 			var isMatchWon = this.IsMatchWon(this.MatchRules.SetsToWin);
 
@@ -66,7 +88,10 @@ public class Match
 				this.WinnerIndex = currentPlayerIndex;
 			}
 			else
-				this.Sets.Add(new Set(this.Players.Count));
+			{
+				var startingPlayerIndex = this.CurrentSet.StartingPlayerIndex;
+				this.Sets.Add(new Set(this.Players.Count, startingPlayerIndex));
+			}
 		}
 	}
 
@@ -80,18 +105,3 @@ public class Match
 	}
 }
 
-// for (var i = 0; i< this.Statistics.Count; i++)
-// 				{
-// 					var statistic = this.Statistics[i];
-
-// 					foreach (var set in this.Sets)
-// 					{
-// 	foreach (var leg in set.Legs)
-// 	{
-// 		foreach (var turnn in leg.Turns[i])
-// 		{
-// 			statistic.AverageScore = ((statistic.AverageTurnScore * statistic.PlayedTurns) + points) / (statistic.PlayedTurns + 1);
-// 		}
-// 	}
-// }
-// }

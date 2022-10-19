@@ -3,7 +3,7 @@ namespace App.Models;
 public class PlayerLegStatistic
 {
 	public int OneEighties { get; set; }
-	public int AverageTurnScore { get; set; }
+	public double AverageTurnScore { get; set; }
 	public int PlayedTurns { get; set; }
 	public bool IsNineDarter { get; set; }
 
@@ -16,7 +16,7 @@ public class PlayerLegStatistic
 		this.PlayedTurns = 0;
 	}
 
-	public PlayerLegStatistic(int oneEighties, bool isNineDarter, int averageScore, int playedTurns)
+	public PlayerLegStatistic(int oneEighties, bool isNineDarter, double averageScore, int playedTurns)
 	{
 		this.OneEighties = oneEighties;
 		this.AverageTurnScore = averageScore;

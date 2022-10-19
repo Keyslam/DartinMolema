@@ -13,7 +13,7 @@ public interface ILeg
 	ITurn CurrentTurn { get; }
 	bool IsDone { get; }
 
-
+	int GetRemainingPointsAfterTurn(LegRules legRules, ITurn turn);
 	void PlayTurn(LegRules legRules, ITurn turn);
 }
 
@@ -30,15 +30,23 @@ public class Leg : ILeg
 	public ITurn CurrentTurn => this.Turns[this.CurrentPlayerIndex].Last();
 	public bool IsDone => this.WinnerIndex != -1;
 
-	public Leg(int playerCount)
+	public Leg(int playerCount, int currentPlayerIndex)
 	{
 		this.WinnerIndex = -1;
 		this.PlayerCount = playerCount;
-		this.CurrentPlayerIndex = 0;
+		this.CurrentPlayerIndex = currentPlayerIndex;
 
 		this.Points = Enumerable.Repeat(0, this.PlayerCount).ToList();
-		this.Turns = Enumerable.Repeat(new List<ITurn>(), this.PlayerCount).ToList();
-		this.Statistics = Enumerable.Repeat(new PlayerLegStatistic(), this.PlayerCount).ToList();
+
+		this.Turns = Enumerable
+			.Repeat(() => new List<ITurn>(), this.PlayerCount)
+			.Select(x => x())
+			.ToList();
+
+		this.Statistics = Enumerable
+			.Repeat(() => new PlayerLegStatistic(), this.PlayerCount)
+			.Select(x => x())
+			.ToList();
 	}
 
 	public Leg(int winnerIndex, int playerCount, int currentPlayerIndex, IEnumerable<int> points, IEnumerable<List<ITurn>> turns, IEnumerable<PlayerLegStatistic> statistics)
@@ -49,6 +57,20 @@ public class Leg : ILeg
 		this.Points = new List<int>(points);
 		this.Turns = new List<List<ITurn>>(turns);
 		this.Statistics = new List<PlayerLegStatistic>(statistics);
+	}
+
+	public int GetRemainingPointsAfterTurn(LegRules legRules, ITurn turn)
+	{
+		if (this.IsDone)
+			throw new InvalidOperationException("Leg is already done");
+
+		var isTurnValid = this.IsTurnValid(legRules, turn);
+
+		if (!isTurnValid)
+			return 0;
+
+		var currentPoints = this.GetCurrentPlayerPoints();
+		return legRules.TargetScore - (currentPoints + turn.ThrownPoints);
 	}
 
 	public void PlayTurn(LegRules legRules, ITurn turn)

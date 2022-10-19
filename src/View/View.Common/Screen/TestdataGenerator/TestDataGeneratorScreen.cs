@@ -3,7 +3,6 @@ using App.Core;
 using App.Repository;
 using App.Models;
 using ImGuiNET;
-using App.ReferenceLoader;
 
 namespace App.View;
 
@@ -58,14 +57,10 @@ internal class TestdataGeneratorScreen : Screen
 
 	private bool Generated { get; set; } = false;
 
-	private ReferenceLoader<Player, IPlayerRepository> PlayerReferenceLoader { get; }
-
 	public TestdataGeneratorScreen(DependencyContainer dependencyContainer) : base(dependencyContainer)
 	{
 		this.playerRepository = dependencyContainer.GetPlayerRepository();
 		this.matchRepository = dependencyContainer.GetMatchRepository();
-
-		this.PlayerReferenceLoader = dependencyContainer.GetPlayerReferenceLoader();
 
 		this.players = this.playerRepository.ReadAll().ToList();
 
@@ -78,15 +73,18 @@ internal class TestdataGeneratorScreen : Screen
 
 	public override void Update()
 	{
-		ImGui.SliderInt("Players to Generate", ref this.playersToGenerateInput, 0, 1000);
+		ImGui.SliderInt("Players to Generate", ref this.playersToGenerateInput, 2, 100);
 
-		ImGui.SliderInt("Matches to Generate", ref this.matchesToGenerateInput, 0, 10000);
+		ImGui.SliderInt("Matches to Generate", ref this.matchesToGenerateInput, 1, 1000);
 
 		if (ImGuiExtensions.Button("Generate Testdata"))
 			GenerateTestData(this.playersToGenerateInput, this.matchesToGenerateInput);
 
 		if (this.Generated)
 			ImGui.Text("Data generated");
+
+		if (ImGui.Button("Back"))
+			this.DependencyContainer.GetScreenNavigator().Pop();
 	}
 
 	public void GenerateTestData(int playerCount, int matchCount)
@@ -157,23 +155,20 @@ internal class TestdataGeneratorScreen : Screen
 			var result = Parallel.For(0, batchSize, (j, state) =>
 			{
 				var match = matches[j];
-				playTurns(match);
+				PlayTurns(match);
 			});
 
-			Console.WriteLine($"Done generating batch {i}");
-
-			Console.WriteLine($"Writing batch {i}");
 			foreach (var match in matches)
 			{
-				foreach (var playerReference in match.Players)
+				foreach (var playerId in match.Players)
 				{
-					var player = this.PlayerReferenceLoader.Resolve(playerReference);
+					var player = playerRepository.Read(playerId)!;
+					player.PlayMatch(match);
 					playerRepository.Save(player);
 				}
 
 				matchRepository.Save(match);
 			}
-			Console.WriteLine($"Done writing batch {i}");
 		}
 
 		return true;
@@ -188,8 +183,13 @@ internal class TestdataGeneratorScreen : Screen
 		matchBuilder.LegsToWin = random.Next(1, 6);
 		matchBuilder.ScoreToWin = random.Next(0, 2) == 1 ? 301 : 501;
 
-		DateTime date = new DateTime(2000, 1, 1);
-		date.AddMinutes(random.Next(0, (int)(DateTime.Now - date).TotalMinutes));
+		var startDate = new DateTime(2000, 1, 1);
+		var endDate = DateTime.Now;
+
+		TimeSpan timeSpan = endDate - startDate;
+		TimeSpan newSpan = new TimeSpan(0, random.Next(0, (int)timeSpan.TotalMinutes), 0);
+		DateTime date = startDate + newSpan;
+
 		matchBuilder.Date = date;
 
 		var playerOneIndex = random.Next(0, players.Count());
@@ -204,7 +204,7 @@ internal class TestdataGeneratorScreen : Screen
 		return matchBuilder.Build();
 	}
 
-	public void playTurns(Match match)
+	public void PlayTurns(Match match)
 	{
 		while (!match.IsDone)
 		{
@@ -224,7 +224,7 @@ internal class TestdataGeneratorScreen : Screen
 
 		for (int i = 0; i < maxThrowCount; i++)
 		{
-			var @throw = this.makeThrow(remainingPoints);
+			var @throw = this.MakeThrow(remainingPoints);
 			remainingPoints -= @throw.GetThrownPoints();
 
 			throws.Add(@throw);
@@ -238,7 +238,7 @@ internal class TestdataGeneratorScreen : Screen
 		return turn;
 	}
 
-	public Throw makeThrow(int remainingPoints)
+	public Throw MakeThrow(int remainingPoints)
 	{
 		Random random = new Random();
 

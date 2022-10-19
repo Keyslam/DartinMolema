@@ -4,7 +4,7 @@ public class PlayerSetStatistic
 {
 	public int OneEighties { get; set; }
 	public int Ninedarters { get; set; }
-	public int AverageScore { get; set; }
+	public double AverageScore { get; set; }
 	public int PlayedTurns { get; set; }
 
 	public int LegsPlayed { get; set; }
@@ -22,7 +22,7 @@ public class PlayerSetStatistic
 		this.LegsWon = 0;
 	}
 
-	public PlayerSetStatistic(int oneEighties, int nineDarters, int averageScore, int playedTurns, int legsPlayed, int legsWon)
+	public PlayerSetStatistic(int oneEighties, int nineDarters, double averageScore, int playedTurns, int legsPlayed, int legsWon)
 	{
 		this.OneEighties = oneEighties;
 		this.Ninedarters = nineDarters;
@@ -43,11 +43,14 @@ public class PlayerSetStatistic
 		this.PlayedTurns++;
 	}
 
-	public void PlayLeg(bool won)
+	public void PlayLeg(bool won, bool isNineDarter)
 	{
 		this.LegsPlayed++;
 
 		if (won)
 			this.LegsWon++;
+
+		if (isNineDarter)
+			this.Ninedarters++;
 	}
 }

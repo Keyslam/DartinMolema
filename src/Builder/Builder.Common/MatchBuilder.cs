@@ -52,14 +52,10 @@ public class MatchBuilder
 
 	public Match Build()
 	{
-		var players = this.Players.Select(
-			player => new Reference<Player>(player.Id)
-		);
-
 		var match = new Match(
 			this.BuildName(this.Date, this.Players),
 			this.Date,
-			players,
+			this.Players.Select(player => player.Id),
 			new MatchRules(
 				new SetRules(
 					new LegRules(

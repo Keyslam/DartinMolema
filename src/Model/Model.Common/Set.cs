@@ -26,23 +26,38 @@ public class Set : ISet
 	public ILeg CurrentLeg => Legs.Last();
 	public bool IsDone => this.WinnerIndex != -1;
 	public int CurrentPlayerIndex => this.CurrentLeg.CurrentPlayerIndex;
+	public int StartingPlayerIndex { get; set; }
 
-	public Set(int playerCount)
+	public Set(int playerCount, int startingPlayerIndex)
 	{
 		this.WinnerIndex = -1;
 		this.PlayerCount = playerCount;
 		this.Legs = new List<ILeg>();
-		this.Statistics = Enumerable.Repeat(new PlayerSetStatistic(), this.PlayerCount).ToList();
+		this.Statistics = Enumerable
+			.Repeat(() => new PlayerSetStatistic(), this.PlayerCount)
+			.Select(x => x())
+			.ToList();
 
-		this.Legs.Add(this.CreateLeg(this.PlayerCount));
+		this.StartingPlayerIndex = startingPlayerIndex;
+
+		this.Legs.Add(this.CreateLeg(this.PlayerCount, this.StartingPlayerIndex));
 	}
 
-	public Set(int winnerIndex, int playerCount, IEnumerable<ILeg> legs, IEnumerable<PlayerSetStatistic> statistics)
+	public Set(int winnerIndex, int playerCount, int startingPlayerIndex, IEnumerable<ILeg> legs, IEnumerable<PlayerSetStatistic> statistics)
 	{
 		this.WinnerIndex = winnerIndex;
 		this.PlayerCount = playerCount;
 		this.Legs = new List<ILeg>(legs);
 		this.Statistics = new List<PlayerSetStatistic>(statistics);
+		this.StartingPlayerIndex = startingPlayerIndex;
+	}
+
+	public int GetRemainingPointsAfterTurn(SetRules setRules, ITurn turn)
+	{
+		if (this.IsDone)
+			throw new InvalidOperationException("Set is already done");
+
+		return this.CurrentLeg.GetRemainingPointsAfterTurn(setRules.LegRules, turn);
 	}
 
 	public void PlayTurn(SetRules setRules, ITurn turn)
@@ -60,15 +75,20 @@ public class Set : ISet
 		if (this.CurrentLeg.IsDone)
 		{
 			foreach (var statistic in this.Statistics)
-				statistic.PlayLeg(currentPlayerIndex == CurrentLeg.WinnerIndex);
+			{
+				var won = this.Statistics.IndexOf(statistic) == CurrentLeg.WinnerIndex;
+				var isNineDarter = won && this.CurrentLeg.Turns[this.CurrentPlayerIndex].Count == 3;
+				statistic.PlayLeg(won, isNineDarter);
+			}
 
 			var isSetWon = this.IsSetWon(setRules.LegsToWin);
 
+			this.StartingPlayerIndex = (this.StartingPlayerIndex + 1) % this.PlayerCount;
 			if (isSetWon)
 				this.WinnerIndex = currentPlayerIndex;
 			else
 			{
-				this.Legs.Add(this.CreateLeg(this.PlayerCount));
+				this.Legs.Add(this.CreateLeg(this.PlayerCount, this.StartingPlayerIndex));
 			}
 		}
 	}
@@ -82,8 +102,8 @@ public class Set : ISet
 		return (wonLegs == legsToWin);
 	}
 
-	public virtual Leg CreateLeg(int playerCount)
+	public virtual Leg CreateLeg(int playerCount, int currentPlayerIndex)
 	{
-		return new Leg(playerCount);
+		return new Leg(playerCount, currentPlayerIndex);
 	}
 }

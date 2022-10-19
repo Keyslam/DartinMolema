@@ -6,7 +6,7 @@ namespace App.Repository.LocalRepository.Models;
 public class PlayerStatisticDTO
 {
 	[JsonProperty("a")]
-	public int AverageTurnScore { get; set; }
+	public double AverageTurnScore { get; set; }
 
 	[JsonProperty("b")]
 	public int PlayedTurns { get; set; }

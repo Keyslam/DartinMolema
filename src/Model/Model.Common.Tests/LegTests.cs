@@ -14,7 +14,7 @@ public class LegTests
 		// Arrange
 		var turnRules = new TurnRules(1);
 		var legRules = new LegRules(turnRules, 501);
-		var leg = new Leg(1);
+		var leg = new Leg(1, 0);
 		var turn = CreateTurnMock(points, true);
 
 		// Act
@@ -30,7 +30,7 @@ public class LegTests
 		// Arrange
 		var turnRules = new TurnRules(1);
 		var legRules = new LegRules(turnRules, 1);
-		var leg = new Leg(1);
+		var leg = new Leg(1, 0);
 		var turn = CreateTurnMock(1, true);
 
 		// Act
@@ -46,7 +46,7 @@ public class LegTests
 		// Arrange
 		var turnRules = new TurnRules(1);
 		var legRules = new LegRules(turnRules, 1);
-		var leg = new Leg(1);
+		var leg = new Leg(1, 0);
 		var turn = CreateTurnMock(1, false);
 
 		// Act
@@ -62,7 +62,7 @@ public class LegTests
 		// Arrange
 		var turnRules = new TurnRules(1);
 		var legRules = new LegRules(turnRules, 1);
-		var leg = new Leg(2);
+		var leg = new Leg(2, 0);
 		var turn = CreateTurnMock();
 
 		// Act
@@ -78,7 +78,7 @@ public class LegTests
 		// Arrange
 		var turnRules = new TurnRules(1);
 		var legRules = new LegRules(turnRules, 1);
-		var leg = new Leg(2);
+		var leg = new Leg(2, 0);
 		var turn = CreateTurnMock();
 
 		// Act

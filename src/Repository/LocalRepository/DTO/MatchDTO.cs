@@ -38,7 +38,7 @@ internal class MatchDTO
 		this.Id = match.Id;
 		this.Name = match.Name;
 		this.Date = match.Date;
-		this.Players = match.Players.Select(player => player.Id).ToList();
+		this.Players = match.Players.Select(playerId => playerId).ToList();
 		this.WinnerIndex = match.WinnerIndex;
 		this.MatchRules = new MatchRulesDTO(match.MatchRules);
 		this.Sets = match.Sets.Select(set => new SetDTO(set)).ToList();
@@ -51,7 +51,7 @@ internal class MatchDTO
 	public Match ToReal()
 	{
 		var players = this.Players
-			.Select(playerId => new Reference<Player>(playerId));
+			.Select(playerId => playerId);
 
 		var sets = this.Sets
 			.Select(set => set.ToReal());

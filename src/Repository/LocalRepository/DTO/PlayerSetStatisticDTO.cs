@@ -12,7 +12,7 @@ public class PlayerSetStatisticDTO
 	public int Ninedarters { get; set; }
 
 	[JsonProperty("c")]
-	public int AverageScore { get; set; }
+	public double AverageScore { get; set; }
 
 	[JsonProperty("d")]
 	public int PlayedTurns { get; set; }

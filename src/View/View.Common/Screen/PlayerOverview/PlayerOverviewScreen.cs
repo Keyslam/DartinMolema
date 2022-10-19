@@ -22,10 +22,10 @@ internal class PlayerOverviewScreen : Screen
 	{
 		this.PlayerRepository = dependencyContainer.GetPlayerRepository();
 
-		var matchReferenceLoader = dependencyContainer.GetMatchReferenceLoader();
+		var matchRepository = dependencyContainer.GetMatchRepository();
 
 		this.Matches = player.PlayedMatches
-			.Select(matchReference => matchReferenceLoader.Resolve(matchReference))
+			.Select(matchId => matchRepository.Read(matchId)!)
 			.ToList();
 
 		this.MatchTitles = new string[this.Matches.Count];
@@ -55,6 +55,7 @@ internal class PlayerOverviewScreen : Screen
 
 			if (ImGui.TreeNodeEx("Throws", ImGuiTreeNodeFlags.DefaultOpen))
 			{
+				ImGui.Text($"Average score: {((int)this.Player.Statistic.AverageTurnScore)}");
 				ImGui.Text($"9 darters: {this.Player.Statistic.Ninedarters}");
 				ImGui.Text($"180's: {this.Player.Statistic.OneEighties}");
 

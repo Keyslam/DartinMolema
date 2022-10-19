@@ -32,13 +32,13 @@ internal class PlayerDTO
 		this.Id = player.Id;
 		this.FullName = player.FullName;
 		this.PlayedMatches = player.PlayedMatches
-			.Select(match => match.Id)
+			.Select(match => match)
 			.ToList();
 		this.WonMatches = player.WonMatches
-			.Select(match => match.Id)
+			.Select(match => match)
 			.ToList();
 		this.LostMatches = player.LostMatches
-			.Select(match => match.Id)
+			.Select(match => match)
 			.ToList();
 		this.Statistic = new PlayerStatisticDTO(player.Statistic);
 	}
@@ -46,13 +46,13 @@ internal class PlayerDTO
 	public Player ToReal()
 	{
 		var playedMatches = this.PlayedMatches
-			.Select(matchId => new Reference<Match>(matchId));
+			.Select(matchId => matchId);
 
 		var wonMatches = this.WonMatches
-			.Select(matchId => new Reference<Match>(matchId));
+			.Select(matchId => matchId);
 
 		var lostMatches = this.LostMatches
-			.Select(matchId => new Reference<Match>(matchId));
+			.Select(matchId => matchId);
 
 		var statistic = this.Statistic.ToReal();
 

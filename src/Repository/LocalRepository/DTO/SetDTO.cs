@@ -12,9 +12,12 @@ internal class SetDTO
 	public int PlayerCount { get; set; }
 
 	[JsonProperty("c")]
-	public List<LegDTO> Legs { get; set; }
+	public int StartingPlayerIndex { get; set; }
 
 	[JsonProperty("d")]
+	public List<LegDTO> Legs { get; set; }
+
+	[JsonProperty("e")]
 	public List<PlayerSetStatisticDTO> Statistics { get; set; }
 
 #pragma warning disable 8618
@@ -42,6 +45,7 @@ internal class SetDTO
 
 		var set = new Set(
 			this.WinnerIndex,
+			this.StartingPlayerIndex,
 			this.PlayerCount,
 			legs,
 			statistics
