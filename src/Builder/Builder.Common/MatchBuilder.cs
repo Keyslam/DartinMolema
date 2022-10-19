@@ -38,6 +38,12 @@ public class MatchBuilder
 		return this;
 	}
 
+	public MatchBuilder SetScoreToWin(int scoreToWin)
+	{
+		this.ScoreToWin = scoreToWin;
+		return this;
+	}
+
 	public MatchBuilder AddPlayer(Player player)
 	{
 		this.Players.Add(player);
