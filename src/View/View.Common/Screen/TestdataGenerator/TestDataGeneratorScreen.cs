@@ -4,6 +4,7 @@ using App.Repository;
 using App.Models;
 using App.GameRuler;
 using ImGuiNET;
+using System.Globalization;
 
 namespace App.View;
 
@@ -123,11 +124,13 @@ internal class TestdataGeneratorScreen : Screen
 		{
 			Console.WriteLine($"Generating player {i}");
 			var (success, fullName) = GetNewName();
+			var country = GetRandomCountry();
 
 			Player player = new Player()
 			{
 				Id = Guid.NewGuid(),
 				FullName = fullName,
+				Country = country,
 				PlayedGames = new List<Guid>(),
 				WonGames = new List<Guid>(),
 				LostGames = new List<Guid>(),
@@ -168,6 +171,21 @@ internal class TestdataGeneratorScreen : Screen
 		}
 
 		return (false, String.Empty);
+	}
+
+	private string GetRandomCountry()
+	{
+		Random random = new Random();
+		List<string> CountryList = new List<string>();
+		CultureInfo[] getCultureInfo = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+		foreach (var getCulture in getCultureInfo)
+		{
+			RegionInfo GetRegionInfo = new RegionInfo(getCulture.LCID);
+
+			if (!(CountryList.Contains(GetRegionInfo.EnglishName)))
+				CountryList.Add(GetRegionInfo.EnglishName);
+		}
+		return CountryList.OrderBy(n => random.NextDouble()).First();
 	}
 
 	public bool GenerateMatches(int matchCount)
