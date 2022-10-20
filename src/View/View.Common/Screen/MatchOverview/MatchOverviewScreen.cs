@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Text;
 using App.Core;
 using App.Models;
 using App.Repository;
@@ -9,18 +8,18 @@ namespace App.View;
 
 internal class MatchOverviewScreen : Screen
 {
+	private IMatchRepository MatchRepository { get; }
+	private IPlayerRepository PlayerRepository { get; }
+
 	private const int MaxTurnScore = 180;
 	private const int ScoreStepSize = 20;
 	private const float DiagramOffset = 30.0f;
 	private const float DiagramHeight = 300.0f;
 	private const float VerticalLabelHeight = 16.0f;
 
-	private IMatchRepository MatchRepository { get; }
-	private IPlayerRepository PlayerRepository { get; }
 	private Match Match { get; }
 
 	private List<Player> Players { get; }
-	private Dictionary<Guid, Player> PlayersMap { get; }
 
 	private Player? Winner { get; }
 
@@ -33,20 +32,14 @@ internal class MatchOverviewScreen : Screen
 	{
 		this.MatchRepository = dependencyContainer.GetMatchRepository();
 		this.PlayerRepository = dependencyContainer.GetPlayerRepository();
+
 		this.Match = match;
 
-		this.Players = new List<Player>();
-		this.PlayersMap = new Dictionary<Guid, Player>();
-		foreach (var playerId in this.Match.Players)
-		{
-			var player = PlayerRepository.Read(playerId)!;
+		this.Players = this.Match.Players
+			.Select(playerId => this.PlayerRepository.Read(playerId)!)
+			.ToList();
 
-			this.Players.Add(player);
-			this.PlayersMap.Add(playerId, player);
-		}
-
-		if (this.Match.WinnerId != Guid.Empty)
-			this.Winner = PlayerRepository.Read(Match.WinnerId);
+		this.Winner = this.Match.IsDone ? this.Players[this.Match.WinnerIndex] : null;
 
 		PlayerAHistogramDatas = new List<float[]>();
 		PlayerBHistogramDatas = new List<float[]>();
@@ -60,11 +53,11 @@ internal class MatchOverviewScreen : Screen
 			{
 				var leg = set.Legs[i];
 
-				var playerAAverage = leg.Statistics[this.Match.Players[0]].AverageTurnScore;
-				var playerBAverage = leg.Statistics[this.Match.Players[1]].AverageTurnScore;
+				var playerAAverage = leg.Statistics[0].AverageTurnScore;
+				var playerBAverage = leg.Statistics[1].AverageTurnScore;
 
-				playerAHistogramData[i * 3 + 0] = playerAAverage;
-				playerBHistogramData[i * 3 + 1] = playerBAverage;
+				playerAHistogramData[i * 3 + 0] = (float)playerAAverage;
+				playerBHistogramData[i * 3 + 1] = (float)playerBAverage;
 			}
 
 			PlayerAHistogramDatas.Add(playerAHistogramData);
@@ -79,8 +72,8 @@ internal class MatchOverviewScreen : Screen
 		ImGui.Text($"Match Overview - {Match.Name}");
 		ImGuiExtensions.Spacing(5);
 
-		ImGui.Text($"First to {Match.SetsToWin} sets wins the match");
-		ImGui.Text($"First to {Match.LegsToWin} legs wins the match");
+		ImGui.Text($"First to {Match.MatchRules.SetsToWin} sets wins the match");
+		ImGui.Text($"First to {Match.MatchRules.SetRules.LegsToWin} legs wins the match");
 		ImGuiExtensions.Spacing(3);
 
 		if (this.Winner != null)
@@ -114,16 +107,16 @@ internal class MatchOverviewScreen : Screen
 
 			foreach (var player in this.Players)
 			{
-				var matchStatistic = this.Match.Statistics[player.Id];
+				var matchStatistic = this.Match.Statistics[this.Players.IndexOf(player)];
 
 				ImGui.TableNextColumn();
 				ImGui.Text(player.FullName);
 				ImGui.TableNextColumn();
-				ImGui.Text(matchStatistic.OneEighties.ToString());
+				ImGui.Text(((int)matchStatistic.OneEighties).ToString());
 				ImGui.TableNextColumn();
-				ImGui.Text(matchStatistic.Ninedarters.ToString());
+				ImGui.Text(((int)matchStatistic.Ninedarters).ToString());
 				ImGui.TableNextColumn();
-				ImGui.Text(matchStatistic.AverageScore.ToString());
+				ImGui.Text(((int)matchStatistic.AverageScore).ToString());
 			}
 			ImGui.EndTable();
 		}
@@ -141,16 +134,16 @@ internal class MatchOverviewScreen : Screen
 
 			foreach (var player in this.Players)
 			{
-				var setStatistic = this.Match.Sets[this.SelectedSet].Statistics[player.Id];
+				var setStatistic = this.Match.Sets[this.SelectedSet].Statistics[this.Players.IndexOf(player)];
 
 				ImGui.TableNextColumn();
 				ImGui.Text(player.FullName);
 				ImGui.TableNextColumn();
-				ImGui.Text(setStatistic.OneEighties.ToString());
+				ImGui.Text(((int)setStatistic.OneEighties).ToString());
 				ImGui.TableNextColumn();
-				ImGui.Text(setStatistic.Ninedarters.ToString());
+				ImGui.Text(((int)setStatistic.Ninedarters).ToString());
 				ImGui.TableNextColumn();
-				ImGui.Text(setStatistic.AverageScore.ToString());
+				ImGui.Text(((int)setStatistic.AverageScore).ToString());
 			}
 			ImGui.EndTable();
 		}
@@ -180,12 +173,12 @@ internal class MatchOverviewScreen : Screen
 					ImGui.Text($"{i + 1}");
 
 					ImGui.TableNextColumn();
-					if (leg.WinnerId != Guid.Empty)
+					if (leg.IsDone)
 					{
-						var winnerName = this.PlayersMap[leg.WinnerId].FullName;
+						var winnerName = this.Players[leg.WinnerIndex].FullName;
 						ImGui.Text($"{winnerName}");
 						ImGui.TableNextColumn();
-						ImGui.Text($"{leg.Turns[leg.WinnerId].Count()}");
+						ImGui.Text($"{leg.Turns[leg.WinnerIndex].Count()}");
 					}
 					else
 					{
