@@ -273,6 +273,8 @@ internal class NewMatchScreen : Screen
 			if (!(CountryList.Contains(GetRegionInfo.EnglishName)))
 				CountryList.Add(GetRegionInfo.EnglishName);
 		}
+
+		CountryList.RemoveAll(x => x.Contains("Côte"));
 		CountryList.Sort();
 		return CountryList;
 	}

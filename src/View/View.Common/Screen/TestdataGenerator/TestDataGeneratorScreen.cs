@@ -148,6 +148,7 @@ internal class TestdataGeneratorScreen : Screen
 			if (!(CountryList.Contains(GetRegionInfo.EnglishName)))
 				CountryList.Add(GetRegionInfo.EnglishName);
 		}
+		CountryList.RemoveAll(x => x.Contains("Côte"));
 		return CountryList.OrderBy(n => random.NextDouble()).First();
 	}
 
