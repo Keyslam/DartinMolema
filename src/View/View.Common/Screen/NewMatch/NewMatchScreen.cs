@@ -5,6 +5,7 @@ using ImGuiNET;
 using App.Models;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace App.View;
 
@@ -18,6 +19,7 @@ internal class NewMatchScreen : Screen
 	private Player[] SelectedPlayers { get; set; }
 
 	private string PlayerName { get; set; }
+	private string PlayerCountry { get; set; }
 	private int AddPlayerIndex { get; set; }
 
 	private int SetsToWinInput { get; set; }
@@ -42,6 +44,7 @@ internal class NewMatchScreen : Screen
 		this.SelectedPlayers = new Player[2];
 
 		this.PlayerName = String.Empty;
+		this.PlayerCountry = String.Empty;
 
 		this.SetsToWinInput = (int)this.MatchBuilder.SetsToWin;
 		this.LegsToWinInput = (int)this.MatchBuilder.LegsToWin;
@@ -78,17 +81,33 @@ internal class NewMatchScreen : Screen
 			this.PlayerName = regex.Replace(this.PlayerName.Trim(), " ");
 			this.PlayerName = Regex.Replace(this.PlayerName, @"^(?<cap>\w)|\b(?<cap>\w)(?=\w*$)", m => m.Groups["cap"].Value.ToUpper());
 
+
+			if (ImGui.BeginCombo("##Country", this.PlayerCountry != String.Empty ? this.PlayerCountry : "Select Country"))
+			{
+				foreach (var country in GetCountryList())
+				{
+					if (country == this.PlayerCountry)
+						continue;
+					if (ImGui.Selectable(country))
+					{
+						this.PlayerCountry = country;
+					};
+				}
+				ImGui.EndCombo();
+			}
+
 			if (ImGui.IsKeyPressed(ImGuiKey.Escape))
 				ImGui.CloseCurrentPopup();
 
 			bool nameInvalid = String.IsNullOrEmpty(this.PlayerName) || this.Players.ToList().Any(x => x.FullName.ToLower() == this.PlayerName.ToLower());
+			bool countryInvalid = String.IsNullOrEmpty(this.PlayerCountry);
 
-			if (nameInvalid)
+			if (nameInvalid || countryInvalid)
 				ImGui.BeginDisabled();
 
 			if (ImGuiExtensions.Button("Save"))
 			{
-				Player player = new Player(this.PlayerName);
+				Player player = new Player(this.PlayerName, this.PlayerCountry);
 
 				if (!this.Players.ToList().Any(x => x.FullName == player.FullName))
 				{
@@ -120,8 +139,10 @@ internal class NewMatchScreen : Screen
 						}
 					}
 				}
-				ImGui.EndDisabled();
 			}
+			if (nameInvalid || countryInvalid)
+				ImGui.EndDisabled();
+
 			ImGui.EndPopup();
 		}
 
@@ -175,6 +196,7 @@ internal class NewMatchScreen : Screen
 		if (ImGuiExtensions.Button("+##" + label, new Vector2(ImGui.GetFrameHeight(), ImGui.GetFrameHeight())))
 		{
 			this.PlayerName = String.Empty;
+			this.PlayerCountry = String.Empty;
 			this.AddPlayerIndex = playerIndex;
 			ImGui.OpenPopup("Add Player");
 		}
@@ -238,6 +260,23 @@ internal class NewMatchScreen : Screen
 				ImGui.CloseCurrentPopup();
 			ImGui.EndPopup();
 		}
+	}
+
+	private static List<string> GetCountryList()
+	{
+		List<string> CountryList = new List<string>();
+		CultureInfo[] getCultureInfo = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+		foreach (var getCulture in getCultureInfo)
+		{
+			RegionInfo GetRegionInfo = new RegionInfo(getCulture.LCID);
+
+			if (!(CountryList.Contains(GetRegionInfo.EnglishName)))
+				CountryList.Add(GetRegionInfo.EnglishName);
+		}
+
+		CountryList.RemoveAll(x => x.Contains("Côte"));
+		CountryList.Sort();
+		return CountryList;
 	}
 
 	private bool InputValid()

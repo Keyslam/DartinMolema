@@ -2,8 +2,10 @@ namespace App.Models;
 
 public class Player
 {
+
 	public Guid Id { get; }
 	public string FullName { get; }
+	public string Country { get; set; }
 
 	public List<Guid> PlayedMatches { get; set; }
 	public List<Guid> WonMatches { get; set; }
@@ -11,20 +13,22 @@ public class Player
 
 	public PlayerStatistic Statistic { get; set; }
 
-	public Player(string fullName)
+	public Player(string fullName, string country)
 	{
 		this.Id = Guid.NewGuid();
 		this.FullName = fullName;
+		this.Country = country;
 		this.PlayedMatches = new List<Guid>();
 		this.WonMatches = new List<Guid>();
 		this.LostMatches = new List<Guid>();
 		this.Statistic = new PlayerStatistic();
 	}
 
-	public Player(Guid id, string fullName, IEnumerable<Guid> playedMatches, IEnumerable<Guid> wonMatches, IEnumerable<Guid> lostMatches, PlayerStatistic statistic)
+	public Player(Guid id, string fullName, string country, IEnumerable<Guid> playedMatches, IEnumerable<Guid> wonMatches, IEnumerable<Guid> lostMatches, PlayerStatistic statistic)
 	{
 		this.Id = id;
 		this.FullName = fullName;
+		this.Country = country;
 		this.PlayedMatches = new List<Guid>(playedMatches);
 		this.WonMatches = new List<Guid>(wonMatches);
 		this.LostMatches = new List<Guid>(lostMatches);

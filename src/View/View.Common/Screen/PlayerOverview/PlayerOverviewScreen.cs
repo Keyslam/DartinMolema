@@ -38,7 +38,7 @@ internal class PlayerOverviewScreen : Screen
 
 	public override void Update()
 	{
-		ImGui.Text($"Player Overview: {Player.FullName}");
+		ImGui.Text($"Player Overview: {Player.FullName} from {Player.Country}");
 
 		ImGuiExtensions.Spacing(5);
 

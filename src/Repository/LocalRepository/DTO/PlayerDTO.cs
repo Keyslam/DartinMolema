@@ -12,15 +12,18 @@ internal class PlayerDTO
 	public string FullName { get; set; }
 
 	[JsonProperty("c")]
-	public List<Guid> PlayedMatches { get; set; }
+	public string Country { get; set; }
 
 	[JsonProperty("d")]
-	public List<Guid> WonMatches { get; set; }
+	public List<Guid> PlayedMatches { get; set; }
 
 	[JsonProperty("e")]
-	public List<Guid> LostMatches { get; set; }
+	public List<Guid> WonMatches { get; set; }
 
 	[JsonProperty("f")]
+	public List<Guid> LostMatches { get; set; }
+
+	[JsonProperty("g")]
 	public PlayerStatisticDTO Statistic { get; set; }
 
 #pragma warning disable 8618
@@ -31,6 +34,7 @@ internal class PlayerDTO
 	{
 		this.Id = player.Id;
 		this.FullName = player.FullName;
+		this.Country = player.Country;
 		this.PlayedMatches = player.PlayedMatches
 			.Select(match => match)
 			.ToList();
@@ -59,6 +63,7 @@ internal class PlayerDTO
 		var player = new Player(
 			this.Id,
 			this.FullName,
+			this.Country,
 			playedMatches,
 			wonMatches,
 			lostMatches,

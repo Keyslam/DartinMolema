@@ -33,6 +33,10 @@ internal class PlayersOverviewScreen : Screen
 
 		ImGuiExtensions.Spacing(3);
 
+		ImGui.SetCursorPosX(17);
+		ImGui.Text("Name");
+		ImGui.SameLine(308);
+		ImGui.Text("Country");
 		if (ImGui.BeginChild("Players", new Vector2(0, 250), true))
 		{
 			for (int i = 0; i < Players.Count; i++)
@@ -44,6 +48,8 @@ internal class PlayersOverviewScreen : Screen
 					SelectedIndex = i;
 					this.ScreenNavigator.Push(DependencyContainer.MakePlayerOverviewScreen(Players[i]));
 				}
+				ImGui.SameLine(300);
+				ImGui.Text(Players[i].Country);
 			}
 
 			ImGui.EndChild();
