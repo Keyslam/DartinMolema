@@ -30,7 +30,6 @@ internal class MatchOverviewScreen : Screen
 
 	public MatchOverviewScreen(Match match, DependencyContainer dependencyContainer) : base(dependencyContainer)
 	{
-		this.MatchRepository = dependencyContainer.GetMatchRepository();
 		this.PlayerRepository = dependencyContainer.GetPlayerRepository();
 
 		this.Match = match;
@@ -73,11 +72,12 @@ internal class MatchOverviewScreen : Screen
 		ImGuiExtensions.Spacing(5);
 
 		ImGui.Text($"First to {Match.MatchRules.SetsToWin} sets wins the match");
-		ImGui.Text($"First to {Match.MatchRules.SetRules.LegsToWin} legs wins the match");
+		ImGui.Text($"First to {Match.MatchRules.SetRules.LegsToWin} legs wins the set");
+
 		ImGuiExtensions.Spacing(3);
 
 		if (this.Winner != null)
-			ImGui.Text($"Winner: {this.Winner.FullName}");
+			ImGui.Text($"Match winner: {this.Winner.FullName}");
 		else
 			ImGui.Text("Match still in progress");
 
@@ -91,6 +91,13 @@ internal class MatchOverviewScreen : Screen
 			}
 			ImGui.EndCombo();
 		}
+
+		ImGuiExtensions.Spacing(3);
+
+		if (this.Match.Sets[this.SelectedSet].IsDone)
+			ImGui.Text($"Set winner: {this.Players[this.Match.Sets[this.SelectedSet].WinnerIndex].FullName}");
+		else
+			ImGui.Text("Set still in progress");
 
 		ImGuiExtensions.Spacing(3);
 
