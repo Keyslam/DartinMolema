@@ -5,28 +5,29 @@ using App.Models;
 using App.View.MatchInput;
 using ImGuiNET;
 using System.Numerics;
-using App.GameRuler;
 
 namespace App.View;
 
 internal class MatchInputScreen : Screen
 {
-	private RuleEngine RuleEngine { get; }
 	private DartInput[] DartInputs { get; }
 
 	private Match Match { get; }
+	private List<Player> Players { get; }
 
 	private ImGuiExtensions.FireOnce SelectFirstDartInput { get; }
 
 	public MatchInputScreen(Match match, DependencyContainer dependencyContainer) : base(dependencyContainer)
 	{
-		this.RuleEngine = this.DependencyContainer.MakeRuleEngine(match);
-
-		this.DartInputs = new DartInput[this.RuleEngine.ThrowsPerTurn];
+		this.DartInputs = new DartInput[match.MatchRules.SetRules.LegRules.TurnRules.ThrowsPerTurn];
 		for (int i = 0; i < DartInputs.Length; i++)
 			this.DartInputs[i] = new DartInput();
 
 		this.Match = match;
+
+		this.Players = this.Match.Players
+			.Select(playerId => dependencyContainer.GetPlayerRepository().Read(playerId)!)
+			.ToList();
 
 		this.SelectFirstDartInput = new ImGuiExtensions.FireOnce(true);
 	}
@@ -56,7 +57,7 @@ internal class MatchInputScreen : Screen
 
 		ImGui.NextColumn();
 
-		foreach (var player in RuleEngine.Players)
+		foreach (var player in this.Players)
 		{
 			PlayerThrows(player);
 			ImGui.Spacing();
@@ -67,26 +68,14 @@ internal class MatchInputScreen : Screen
 
 	private void Header()
 	{
-		var stringBuilder = new StringBuilder();
-		stringBuilder.Append("Match Input : ");
-		for (int i = 0; i < RuleEngine.Players.Count; i++)
-		{
-			var player = RuleEngine.Players[i];
-
-			if (i != 0)
-				stringBuilder.Append(" vs ");
-
-			stringBuilder.Append(player.FullName);
-		}
-
-		ImGui.Text(stringBuilder.ToString());
+		ImGui.Text($"Match Input : {this.Match.Name}");
 	}
 
 
 	private void MatchInfo()
 	{
-		ImGui.Text($"First to {this.RuleEngine.SetsToWin} sets wins the match");
-		ImGui.Text($"First to {this.RuleEngine.LegsToWin} legs wins the set");
+		ImGui.Text($"First to {this.Match.MatchRules.SetsToWin} sets wins the match");
+		ImGui.Text($"First to {this.Match.MatchRules.SetRules.LegsToWin} legs wins the set");
 	}
 
 	private int SelectedIndex = 0;
@@ -104,17 +93,21 @@ internal class MatchInputScreen : Screen
 			ImGui.TableSetupColumn("180's");
 			ImGui.TableHeadersRow();
 
-			foreach (var player in RuleEngine.Players)
+			foreach (var player in this.Players)
 			{
-				var matchStatistic = RuleEngine.GetPlayerMatchStatistic(player);
-				var setStatistic = RuleEngine.GetPlayerSetStatistic(player);
-				var legStatistic = RuleEngine.GetPlayerLegStatistic(player);
+				var playerIndex = this.Players.IndexOf(player);
+				var matchStatistic = this.Match.Statistics[playerIndex];
+				var setStatistic = this.Match.CurrentSet.Statistics[playerIndex];
+				var legStatistic = this.Match.CurrentSet.CurrentLeg.Statistics[playerIndex];
+
+				var points = this.Match.CurrentSet.CurrentLeg.Points[playerIndex];
+				var remainingPoints = this.Match.MatchRules.SetRules.LegRules.TargetScore - points;
 
 				ImGui.TableNextColumn();
 				ImGui.Text(player.FullName);
 
 				ImGui.TableNextColumn();
-				ImGui.Text(legStatistic.AverageTurnScore.ToString());
+				ImGui.Text(((int)legStatistic.AverageTurnScore).ToString());
 
 				ImGui.TableNextColumn();
 				ImGui.Text(matchStatistic.SetsWon.ToString());
@@ -123,7 +116,7 @@ internal class MatchInputScreen : Screen
 				ImGui.Text(setStatistic.LegsWon.ToString());
 
 				ImGui.TableNextColumn();
-				ImGui.Text(legStatistic.RemainingPoints.ToString());
+				ImGui.Text(remainingPoints.ToString());
 
 				ImGui.TableNextColumn();
 				ImGui.Text(matchStatistic.OneEighties.ToString());
@@ -136,14 +129,16 @@ internal class MatchInputScreen : Screen
 
 	private void CurrentlyPlaying()
 	{
-		ImGui.Text($"Currently playing: {RuleEngine.CurrentPlayer.FullName}");
+		var playerIndex = this.Match.CurrentSet.CurrentPlayerIndex;
+		var player = this.Players[playerIndex];
+		ImGui.Text($"Currently playing: {player.FullName}");
 	}
 
 	private void DartInputFields()
 	{
 		var done = false;
 
-		for (int i = 0; i < this.RuleEngine.ThrowsPerTurn; i++)
+		for (int i = 0; i < this.Match.MatchRules.SetRules.LegRules.TurnRules.ThrowsPerTurn; i++)
 		{
 			var dartInput = DartInputs[i];
 
@@ -183,17 +178,20 @@ internal class MatchInputScreen : Screen
 		ImGuiExtensions.Spacing(1);
 
 		ImGui.BeginDisabled();
-		if (ImGui.BeginTable($"{player.FullName} Throws", (int)this.RuleEngine.ThrowsPerTurn + 3, ImGuiTableFlags.Borders))
+		if (ImGui.BeginTable($"{player.FullName} Throws", (int)this.Match.MatchRules.SetRules.LegRules.TurnRules.ThrowsPerTurn + 3, ImGuiTableFlags.Borders))
 		{
 			ImGui.TableSetupColumn("Turn");
-			for (int i = 0; i < this.RuleEngine.ThrowsPerTurn; i++)
+			for (int i = 0; i < this.Match.MatchRules.SetRules.LegRules.TurnRules.ThrowsPerTurn; i++)
 				ImGui.TableSetupColumn($"Dart {i + 1}");
 			ImGui.TableSetupColumn($"Score");
 			ImGui.TableSetupColumn($"Remaining");
 			ImGui.TableHeadersRow();
 
-			var turns = this.RuleEngine.GetPlayerTurns(player.Id);
-			var remainingPoints = this.RuleEngine.ScoreToWin;
+			var playerIndex = this.Players.IndexOf(player);
+			var turns = this.Match.CurrentSet.CurrentLeg.Turns[playerIndex];
+
+
+			var remainingPoints = this.Match.MatchRules.SetRules.LegRules.TargetScore;
 
 			for (int i = 0; i < Math.Max(10, turns.Count); i++)
 			{
@@ -202,7 +200,7 @@ internal class MatchInputScreen : Screen
 				ImGui.TableNextColumn();
 				ImGui.Text($"Turn {i + 1}");
 
-				for (int j = 0; j < RuleEngine.ThrowsPerTurn; j++)
+				for (int j = 0; j < this.Match.MatchRules.SetRules.LegRules.TurnRules.ThrowsPerTurn; j++)
 				{
 					Throw? @throw = null;
 
@@ -212,19 +210,19 @@ internal class MatchInputScreen : Screen
 					ImGui.TableNextColumn();
 
 					if (@throw != null)
-						ImGui.Text($"{this.MapThrowKindToPrefix(@throw.Kind)}{@throw.ThrownValue.ToString()}");
+						ImGui.Text($"{this.MapThrowKindToPrefix(@throw.Kind)}{@throw.ValueRegion.ToString()}");
 				}
 
 				ImGui.TableNextColumn();
 				if (turn != null)
 				{
-					ImGui.Text(turn.Score.ToString());
+					ImGui.Text(turn.AssignedPoints.ToString());
 				}
 
 				ImGui.TableNextColumn();
 				if (turn != null)
 				{
-					remainingPoints -= turn.Score;
+					remainingPoints -= turn.AssignedPoints;
 					ImGui.Text(remainingPoints.ToString());
 				}
 			}
@@ -238,16 +236,19 @@ internal class MatchInputScreen : Screen
 	{
 		if (ImGuiExtensions.BeginDialogModal("Remaining points"))
 		{
-			var throws = new List<(ThrowKind throwKind, int value)>();
+			var throws = new List<Throw>();
 			foreach (var dartInput in DartInputs)
-				throws.Add(new(dartInput.ThrowKind, dartInput.Value));
+				throws.Add(new Throw(dartInput.Value, dartInput.ThrowKind));
+			var turn = new Turn(throws);
 
-			var remainingPoints = this.RuleEngine.GetRemainingPointsAfterTurn(throws);
+			var remainingPoints = this.Match.GetRemainingPointsAfterTurn(turn);
 
 			if (remainingPoints == 0)
 			{
 				ImGuiExtensions.CenterText("This turn ends the leg.");
-				ImGuiExtensions.CenterText($"The winner is {this.RuleEngine.CurrentPlayer.FullName}");
+				var currentPlayerIndex = this.Match.CurrentSet.CurrentPlayerIndex;
+				var player = this.Players[currentPlayerIndex];
+				ImGuiExtensions.CenterText($"The winner is {player.FullName}");
 			}
 			else
 			{
@@ -258,14 +259,14 @@ internal class MatchInputScreen : Screen
 
 			ImGuiExtensions.EndDialogModal("No", "Yes", () =>
 			{
-				var matchEnded = this.RuleEngine.PlayTurn(throws);
+				this.Match.PlayTurn(turn);
 
 				for (int i = 0; i < DartInputs.Length; i++)
 					this.DartInputs[i] = new DartInput();
 
 				SelectFirstDartInput.MakeActive();
 
-				if (matchEnded)
+				if (this.Match.IsDone)
 				{
 					ScreenNavigator.PopToRoot();
 					ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(this.Match));

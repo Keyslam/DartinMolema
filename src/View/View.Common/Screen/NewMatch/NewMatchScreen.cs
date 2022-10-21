@@ -1,11 +1,9 @@
-using System.Reflection.Emit;
 using App.Builders;
 using App.Core;
 using App.Repository;
 using ImGuiNET;
 using App.Models;
 using System.Numerics;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace App.View;
@@ -24,13 +22,15 @@ internal class NewMatchScreen : Screen
 
 	private int SetsToWinInput { get; set; }
 	private int LegsToWinInput { get; set; }
-	private int ScoreToWinInput { get; set; }
 
 	private int DayInput { get; set; }
 	private int MonthInput { get; set; }
 	private int YearInput { get; set; }
 	private int HourInput { get; set; }
 	private int MinuteInput { get; set; }
+
+	private int ScoreToWinSelectedIdx;
+	private string[] Scores;
 
 	public NewMatchScreen(DependencyContainer dependencyContainer) : base(dependencyContainer)
 	{
@@ -45,13 +45,15 @@ internal class NewMatchScreen : Screen
 
 		this.SetsToWinInput = (int)this.MatchBuilder.SetsToWin;
 		this.LegsToWinInput = (int)this.MatchBuilder.LegsToWin;
-		this.ScoreToWinInput = (int)this.MatchBuilder.ScoreToWin;
 
 		this.DayInput = this.MatchBuilder.Date.Day;
 		this.MonthInput = this.MatchBuilder.Date.Month;
 		this.YearInput = this.MatchBuilder.Date.Year;
 		this.HourInput = this.MatchBuilder.Date.Hour;
 		this.MinuteInput = this.MatchBuilder.Date.Minute;
+
+		this.ScoreToWinSelectedIdx = 0;
+		this.Scores = new string[] { "501", "301" };
 	}
 
 	public override void Update()
@@ -86,20 +88,7 @@ internal class NewMatchScreen : Screen
 
 			if (ImGuiExtensions.Button("Save"))
 			{
-				Player player = new Player()
-				{
-					Id = Guid.NewGuid(),
-					FullName = this.PlayerName,
-					LostGames = new List<Guid>(),
-					WonGames = new List<Guid>(),
-					PlayedGames = new List<Guid>(),
-					Statistic = new PlayerStatistic()
-					{
-						AverageTurnScore = 0,
-						Ninedarters = 0,
-						OneEighties = 0,
-					}
-				};
+				Player player = new Player(this.PlayerName);
 
 				if (!this.Players.ToList().Any(x => x.FullName == player.FullName))
 				{
@@ -137,19 +126,20 @@ internal class NewMatchScreen : Screen
 		}
 
 		var setsToWinInput = this.SetsToWinInput;
-		if (ImGui.InputInt("Sets to win", ref setsToWinInput))
+		if (ImGui.InputInt("Sets to win match", ref setsToWinInput))
 		{
 			this.SetsToWinInput = Math.Clamp(setsToWinInput, 1, 100);
 			this.MatchBuilder.SetsToWin = this.SetsToWinInput;
-			Console.WriteLine(this.MatchBuilder.SetsToWin);
 		}
 
 		var legsToWinInput = this.LegsToWinInput;
-		if (ImGui.InputInt("Legs to win", ref legsToWinInput))
+		if (ImGui.InputInt("Legs to win set", ref legsToWinInput))
 		{
 			this.LegsToWinInput = Math.Clamp(legsToWinInput, 1, 100);
 			this.MatchBuilder.LegsToWin = this.LegsToWinInput;
 		}
+
+		ImGui.Combo("Score to win leg", ref this.ScoreToWinSelectedIdx, this.Scores, this.Scores.Length);
 
 		if (!InputValid())
 			ImGui.BeginDisabled();
@@ -195,7 +185,7 @@ internal class NewMatchScreen : Screen
 		if (this.SelectedPlayers[playerIndex] != null)
 			this.MatchBuilder.RemovePlayer(this.SelectedPlayers[playerIndex]);
 		this.SelectedPlayers[playerIndex] = player;
-		this.MatchBuilder.AddPlayer(player.Id);
+		this.MatchBuilder.AddPlayer(player);
 	}
 
 	private void DateTimeSelector()
@@ -272,7 +262,9 @@ internal class NewMatchScreen : Screen
 			return;
 		}
 
-		var match = this.MatchBuilder.Build(this.DependencyContainer.GetPlayerRepository());
+		this.MatchBuilder.SetScoreToWin(Int32.Parse(this.Scores[this.ScoreToWinSelectedIdx]));
+
+		var match = this.MatchBuilder.Build();
 		this.ScreenNavigator.Push(this.DependencyContainer.MakeMatchInputScreen(match));
 	}
 }

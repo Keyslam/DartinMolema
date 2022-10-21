@@ -1,23 +1,24 @@
+using App.Models;
 using App.Repository.LocalRepository.Models;
 using Newtonsoft.Json;
 
 namespace App.Repository.LocalRepository;
 
-public class PlayerRepository : IPlayerRepository
+public class LocalPlayerRepository : IPlayerRepository
 {
-	public void Save(App.Models.Player player)
+	public void Save(Player player)
 	{
 		Directory.CreateDirectory(this.GetBaseDirectory());
 
 		var filepath = this.PlayerToFilepath(player);
 
-		var jsonPlayer = new Player(player);
+		var jsonPlayer = new PlayerDTO(player);
 		var serializedObject = JsonConvert.SerializeObject(jsonPlayer);
 
 		File.WriteAllText(filepath, serializedObject);
 	}
 
-	public App.Models.Player? Read(Guid id)
+	public Player? Read(Guid id)
 	{
 		Directory.CreateDirectory(this.GetBaseDirectory());
 
@@ -26,12 +27,12 @@ public class PlayerRepository : IPlayerRepository
 		return ReadFromFile(filepath);
 	}
 
-	private App.Models.Player? ReadFromFile(string filepath)
+	private Player? ReadFromFile(string filepath)
 	{
 		Directory.CreateDirectory(this.GetBaseDirectory());
 
 		var serializedObject = File.ReadAllText(filepath);
-		var jsonPlayer = JsonConvert.DeserializeObject<Player>(serializedObject);
+		var jsonPlayer = JsonConvert.DeserializeObject<PlayerDTO>(serializedObject);
 
 		if (jsonPlayer == null)
 			return null;
@@ -41,12 +42,12 @@ public class PlayerRepository : IPlayerRepository
 		return player;
 	}
 
-	public IReadOnlyList<App.Models.Player> ReadAll()
+	public IReadOnlyList<Player> ReadAll()
 	{
 		Directory.CreateDirectory(this.GetBaseDirectory());
 
 		var files = Directory.GetFiles(this.GetBaseDirectory());
-		var players = new List<App.Models.Player>();
+		var players = new List<Player>();
 
 		foreach (var file in files)
 		{
@@ -66,7 +67,7 @@ public class PlayerRepository : IPlayerRepository
 		return $"{Environment.CurrentDirectory}/Data/Players";
 	}
 
-	private string PlayerToFilepath(App.Models.Player player)
+	private string PlayerToFilepath(Player player)
 	{
 		return this.IdToFilepath(player.Id);
 	}

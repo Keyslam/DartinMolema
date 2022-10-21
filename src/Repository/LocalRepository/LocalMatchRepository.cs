@@ -1,23 +1,24 @@
+using App.Models;
 using App.Repository.LocalRepository.Models;
 using Newtonsoft.Json;
 
 namespace App.Repository.LocalRepository;
 
-public class MatchRepository : IMatchRepository
+public class LocalMatchRepository : IMatchRepository
 {
-	public void Save(App.Models.Match match)
+	public void Save(Match match)
 	{
 		Directory.CreateDirectory(this.GetBaseDirectory());
 
 		var filepath = this.MatchToFilepath(match);
 
-		var jsonMatch = new Match(match);
+		var jsonMatch = new MatchDTO(match);
 		var serializedObject = JsonConvert.SerializeObject(jsonMatch);
 
 		File.WriteAllText(filepath, serializedObject);
 	}
 
-	public App.Models.Match? Read(Guid id)
+	public Match? Read(Guid id)
 	{
 		Directory.CreateDirectory(this.GetBaseDirectory());
 
@@ -26,12 +27,12 @@ public class MatchRepository : IMatchRepository
 		return ReadFromFile(filepath);
 	}
 
-	private App.Models.Match? ReadFromFile(string filepath)
+	private Match? ReadFromFile(string filepath)
 	{
 		Directory.CreateDirectory(this.GetBaseDirectory());
 
 		var serializedObject = File.ReadAllText(filepath);
-		var jsonMatch = JsonConvert.DeserializeObject<Match>(serializedObject);
+		var jsonMatch = JsonConvert.DeserializeObject<MatchDTO>(serializedObject);
 
 		if (jsonMatch == null)
 			return null;
@@ -41,12 +42,12 @@ public class MatchRepository : IMatchRepository
 		return match;
 	}
 
-	public IReadOnlyList<App.Models.Match> ReadAll()
+	public IReadOnlyList<Match> ReadAll()
 	{
 		Directory.CreateDirectory(this.GetBaseDirectory());
 
 		var files = Directory.GetFiles(this.GetBaseDirectory());
-		var matches = new List<App.Models.Match>();
+		var matches = new List<Match>();
 
 		foreach (var file in files)
 		{
@@ -71,7 +72,7 @@ public class MatchRepository : IMatchRepository
 		return $"{Environment.CurrentDirectory}/Data/Matches";
 	}
 
-	private string MatchToFilepath(App.Models.Match match)
+	private string MatchToFilepath(Match match)
 	{
 		return this.IdToFilepath(match.Id);
 	}

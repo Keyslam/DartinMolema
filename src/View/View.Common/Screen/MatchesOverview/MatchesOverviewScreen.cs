@@ -69,24 +69,4 @@ internal class MatchesOverviewScreen : Screen
 		if (ImGuiExtensions.Button("Back", new Vector2(120, 0)))
 			this.ScreenNavigator.PopToRoot();
 	}
-
-	private string MakeMatchTitle(Match match)
-	{
-		var titleBuilder = new StringBuilder();
-
-		for (int i = 0; i < match.Players.Count; i++)
-		{
-			if (i != 0)
-				titleBuilder.Append(" vs ");
-
-			string playerName = this.PlayerRepository.Read(match.Players[i])?.FullName ?? "Unknown Player";
-			titleBuilder.Append(playerName);
-		}
-
-		titleBuilder.Append(" | ");
-		titleBuilder.Append(match.Date.ToString("dd-MM-yyyy HH:mm"));
-
-		return titleBuilder.ToString();
-	}
-
 }
