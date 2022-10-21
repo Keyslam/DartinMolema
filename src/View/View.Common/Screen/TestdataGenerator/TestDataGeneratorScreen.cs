@@ -2,7 +2,6 @@ using App.Builders;
 using App.Core;
 using App.Repository;
 using App.Models;
-using App.GameRuler;
 using ImGuiNET;
 using System.Globalization;
 
@@ -24,7 +23,6 @@ internal class TestdataGeneratorScreen : Screen
 		public IReadOnlyList<(Guid, string)> ReadAllNames() => Reader.ReadAllNames();
 
 		public void Save(Match t) { }
-
 	}
 
 	private class PlayerRepositoryMock : IPlayerRepository
@@ -56,12 +54,9 @@ internal class TestdataGeneratorScreen : Screen
 
 	private List<int> possibleValues;
 
-	private bool showPlayerMessage;
-	private bool showMatchMessage;
-	private String playerMessage;
-	private String matchMessage;
-
 	private Random random = new Random(0);
+
+	private bool Generated { get; set; } = false;
 
 	public TestdataGeneratorScreen(DependencyContainer dependencyContainer) : base(dependencyContainer)
 	{
@@ -75,47 +70,30 @@ internal class TestdataGeneratorScreen : Screen
 		this.matches = new List<Match>();
 
 		this.possibleValues = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25 };
-
-		this.showPlayerMessage = false;
-		this.showMatchMessage = false;
 	}
 
 	public override void Update()
 	{
-		ImGui.SliderInt("Players to Generate", ref this.playersToGenerateInput, 0, 1000);
+		ImGui.SliderInt("Players to Generate", ref this.playersToGenerateInput, 2, 100);
 
-		ImGui.SliderInt("Matches to Generate", ref this.matchesToGenerateInput, 0, 10000);
+		ImGui.SliderInt("Matches to Generate", ref this.matchesToGenerateInput, 1, 1000);
 
 		if (ImGuiExtensions.Button("Generate Testdata"))
-		{
 			GenerateTestData(this.playersToGenerateInput, this.matchesToGenerateInput);
-		}
 
-		if (showPlayerMessage)
-		{
-			ImGui.Text(this.playerMessage);
-		}
+		if (this.Generated)
+			ImGui.Text("Data generated");
 
-		if (showMatchMessage)
-		{
-			ImGui.Text(this.matchMessage);
-		}
+		if (ImGui.Button("Back"))
+			this.DependencyContainer.GetScreenNavigator().Pop();
 	}
 
 	public void GenerateTestData(int playerCount, int matchCount)
 	{
-		showPlayerMessage = playerCount > 0;
-		showMatchMessage = matchCount > 0;
+		GeneratePlayers(playerCount);
+		GenerateMatches(matchCount);
 
-		if (GeneratePlayers(playerCount))
-			playerMessage = "Players have been generated";
-		else
-			playerMessage = "Out of possible name combinations";
-
-		if (GenerateMatches(matchCount))
-			matchMessage = "Matches have been generated";
-		else
-			matchMessage = "Error while generating matches";
+		this.Generated = true;
 	}
 
 	public bool GeneratePlayers(int count)
@@ -126,22 +104,7 @@ internal class TestdataGeneratorScreen : Screen
 			var (success, fullName) = GetNewName();
 			var country = GetRandomCountry();
 
-			Player player = new Player()
-			{
-				Id = Guid.NewGuid(),
-				FullName = fullName,
-				Country = country,
-				PlayedGames = new List<Guid>(),
-				WonGames = new List<Guid>(),
-				LostGames = new List<Guid>(),
-				Statistic = new PlayerStatistic()
-				{
-					AverageTurnScore = 0,
-					Ninedarters = 0,
-					OneEighties = 0,
-					PlayedTurns = 0,
-				}
-			};
+			Player player = new Player(fullName, country);
 
 			players.Add(player);
 			playerRepository.Save(player);
@@ -199,32 +162,30 @@ internal class TestdataGeneratorScreen : Screen
 		for (int i = 0; i < batches; i++)
 		{
 			Console.WriteLine($"Generating batch {i}");
-			List<(Match, RuleEngine)> matches = new List<(Match, RuleEngine)>();
+			List<Match> matches = new List<Match>();
 			for (int j = 0; j < batchSize; j++)
 			{
 				Match match = GenerateMatch();
-				var ruleEngine = new RuleEngine(match, matchRepositoryMock, playerRepositoryMock);
-
-				matches.Add((match, ruleEngine));
+				matches.Add(match);
 			}
 
 			var result = Parallel.For(0, batchSize, (j, state) =>
 			{
-				var (match, ruleEngine) = matches[j];
-				playTurns(ruleEngine, match);
+				var match = matches[j];
+				PlayTurns(match);
 			});
 
-			Console.WriteLine($"Done generating batch {i}");
-
-			Console.WriteLine($"Writing batch {i}");
-			foreach (var (match, ruleEngine) in matches)
+			foreach (var match in matches)
 			{
-				foreach (var player in ruleEngine.Players)
+				foreach (var playerId in match.Players)
+				{
+					var player = playerRepository.Read(playerId)!;
+					player.PlayMatch(match);
 					playerRepository.Save(player);
+				}
 
 				matchRepository.Save(match);
 			}
-			Console.WriteLine($"Done writing batch {i}");
 		}
 
 		return true;
@@ -239,8 +200,13 @@ internal class TestdataGeneratorScreen : Screen
 		matchBuilder.LegsToWin = random.Next(1, 6);
 		matchBuilder.ScoreToWin = random.Next(0, 2) == 1 ? 301 : 501;
 
-		DateTime date = new DateTime(2000, 1, 1);
-		date.AddMinutes(random.Next(0, (int)(DateTime.Now - date).TotalMinutes));
+		var startDate = new DateTime(2000, 1, 1);
+		var endDate = DateTime.Now;
+
+		TimeSpan timeSpan = endDate - startDate;
+		TimeSpan newSpan = new TimeSpan(0, random.Next(0, (int)timeSpan.TotalMinutes), 0);
+		DateTime date = startDate + newSpan;
+
 		matchBuilder.Date = date;
 
 		var playerOneIndex = random.Next(0, players.Count());
@@ -252,51 +218,61 @@ internal class TestdataGeneratorScreen : Screen
 		matchBuilder.AddPlayer(players.ElementAt(playerOneIndex));
 		matchBuilder.AddPlayer(players.ElementAt(playerTwoIndex));
 
-		return matchBuilder.Build(playerRepository);
+		return matchBuilder.Build();
 	}
 
-	public void playTurns(RuleEngine ruleEngine, Match match)
+	public void PlayTurns(Match match)
 	{
-		while (ruleEngine.GetCurrentPlayerLegStatistic().RemainingPoints != 0)
+		while (!match.IsDone)
 		{
 			List<(ThrowKind throwKind, int value)> throws = new List<(ThrowKind throwKind, int value)>();
-			int remainingPoints = ruleEngine.GetCurrentPlayerLegStatistic().RemainingPoints;
 
-			for (int i = 0; i < match.ThrowsPerTurn; i++)
-			{
-				throws.Add(makeThrow(ruleEngine, remainingPoints));
-				remainingPoints = ruleEngine.GetRemainingPointsAfterTurn(throws);
+			var points = match.CurrentSet.CurrentLeg.Points[match.CurrentSet.CurrentLeg.CurrentPlayerIndex];
+			var remainingPoints = match.MatchRules.SetRules.LegRules.TargetScore - points;
 
-				if (remainingPoints == 0)
-					break;
-			}
-
-			if (ruleEngine.PlayTurn(throws))
-				return;
+			var turn = this.MakeTurn(match.MatchRules.SetRules.LegRules.TurnRules.ThrowsPerTurn, remainingPoints);
+			match.PlayTurn(turn);
 		}
 	}
 
-	public (ThrowKind, int) makeThrow(RuleEngine ruleEngine, int remainingPoints)
+	public Turn MakeTurn(int maxThrowCount, int remainingPoints)
+	{
+		var throws = new List<Throw>();
+
+		for (int i = 0; i < maxThrowCount; i++)
+		{
+			var @throw = this.MakeThrow(remainingPoints);
+			remainingPoints -= @throw.GetThrownPoints();
+
+			throws.Add(@throw);
+
+			if (remainingPoints <= 0)
+				break;
+		}
+
+		var turn = new Turn(throws);
+
+		return turn;
+	}
+
+	public Throw MakeThrow(int remainingPoints)
 	{
 		Random random = new Random();
 
 		if ((remainingPoints <= 40) && remainingPoints % 2 == 0 && random.Next(0, 100) < 100)
-			return (ThrowKind.Double, remainingPoints / 2);
+			return new Throw(remainingPoints / 2, ThrowKind.Double);
 
 		if ((remainingPoints == 50) && remainingPoints % 2 == 0 && random.Next(0, 100) < 10)
-			return (ThrowKind.InnerBull, remainingPoints / 2);
-
+			return new Throw(remainingPoints / 2, ThrowKind.InnerBull);
 
 		int value = possibleValues.ElementAt(random.Next(0, possibleValues.Count()));
 
 		if (value == 0)
-			return (ThrowKind.None, value);
+			return new Throw(value, ThrowKind.Foul);
 
 		if (value == 25)
-			return (random.Next(0, 100) > 33 ? ThrowKind.OuterBull : ThrowKind.InnerBull, value);
+			return new Throw(value, random.Next(0, 100) > 33 ? ThrowKind.OuterBull : ThrowKind.InnerBull);
 
-		ThrowKind throwKind = random.Next(0, 100) > 50 ? ThrowKind.Single : random.Next(0, 50) > 20 ? ThrowKind.Double : ThrowKind.Triple;
-
-		return (throwKind, value);
+		return new Throw(value, random.Next(0, 100) > 50 ? ThrowKind.Single : random.Next(0, 50) > 20 ? ThrowKind.Double : ThrowKind.Triple);
 	}
 }

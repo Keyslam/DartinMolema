@@ -22,7 +22,11 @@ internal class PlayerOverviewScreen : Screen
 	{
 		this.PlayerRepository = dependencyContainer.GetPlayerRepository();
 
-		this.Matches = player.PlayedGames.Select(matchId => dependencyContainer.GetMatchRepository().Read(matchId)!).ToList();
+		var matchRepository = dependencyContainer.GetMatchRepository();
+
+		this.Matches = player.PlayedMatches
+			.Select(matchId => matchRepository.Read(matchId)!)
+			.ToList();
 
 		this.MatchTitles = new string[this.Matches.Count];
 		for (var i = 0; i < this.Matches.Count; i++)
@@ -43,14 +47,15 @@ internal class PlayerOverviewScreen : Screen
 			if (ImGui.TreeNodeEx("Matches", ImGuiTreeNodeFlags.DefaultOpen))
 			{
 				ImGui.Text($"Matches Played: {this.Matches.Count()}");
-				ImGui.Text($"Matches Won: {this.Player.WonGames.Count}");
-				ImGui.Text($"Matches Lost: {this.Player.LostGames.Count}");
+				ImGui.Text($"Matches Won: {this.Player.WonMatches.Count}");
+				ImGui.Text($"Matches Lost: {this.Player.LostMatches.Count}");
 
 				ImGui.TreePop();
 			}
 
 			if (ImGui.TreeNodeEx("Throws", ImGuiTreeNodeFlags.DefaultOpen))
 			{
+				ImGui.Text($"Average score: {((int)this.Player.Statistic.AverageTurnScore)}");
 				ImGui.Text($"9 darters: {this.Player.Statistic.Ninedarters}");
 				ImGui.Text($"180's: {this.Player.Statistic.OneEighties}");
 
@@ -75,24 +80,5 @@ internal class PlayerOverviewScreen : Screen
 
 		if (ImGuiExtensions.Button("Back", new Vector2(120, 0)))
 			this.ScreenNavigator.Pop();
-	}
-
-	private string MakeMatchTitle(Match match)
-	{
-		var titleBuilder = new StringBuilder();
-
-		for (int i = 0; i < match.Players.Count; i++)
-		{
-			if (i != 0)
-				titleBuilder.Append(" vs ");
-
-			string playerName = this.PlayerRepository.Read(match.Players[i])?.FullName ?? "Unknown Player";
-			titleBuilder.Append(playerName);
-		}
-
-		titleBuilder.Append(" | ");
-		titleBuilder.Append(match.Date.ToString("dd-MM-yyyy HH:mm"));
-
-		return titleBuilder.ToString();
 	}
 }

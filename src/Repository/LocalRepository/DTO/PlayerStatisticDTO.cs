@@ -1,13 +1,12 @@
-#pragma warning disable 8618
-
+using App.Models;
 using Newtonsoft.Json;
 
 namespace App.Repository.LocalRepository.Models;
 
-public class PlayerStatistic
+public class PlayerStatisticDTO
 {
 	[JsonProperty("a")]
-	public int AverageTurnScore { get; set; }
+	public double AverageTurnScore { get; set; }
 
 	[JsonProperty("b")]
 	public int PlayedTurns { get; set; }
@@ -18,9 +17,11 @@ public class PlayerStatistic
 	[JsonProperty("d")]
 	public int Ninedarters { get; set; }
 
-	public PlayerStatistic() { }
+#pragma warning disable 8618
+	public PlayerStatisticDTO() { }
+#pragma warning restore 8618
 
-	public PlayerStatistic(App.Models.PlayerStatistic playerStatistic)
+	public PlayerStatisticDTO(PlayerStatistic playerStatistic)
 	{
 		this.AverageTurnScore = playerStatistic.AverageTurnScore;
 		this.PlayedTurns = playerStatistic.PlayedTurns;
@@ -28,14 +29,14 @@ public class PlayerStatistic
 		this.Ninedarters = playerStatistic.Ninedarters;
 	}
 
-	public App.Models.PlayerStatistic ToReal()
+	public PlayerStatistic ToReal()
 	{
-		var playerStatistic = new App.Models.PlayerStatistic();
-
-		playerStatistic.AverageTurnScore = this.AverageTurnScore;
-		playerStatistic.PlayedTurns = this.PlayedTurns;
-		playerStatistic.OneEighties = this.OneEighties;
-		playerStatistic.Ninedarters = this.Ninedarters;
+		var playerStatistic = new PlayerStatistic(
+			this.AverageTurnScore,
+			this.PlayedTurns,
+			this.OneEighties,
+			this.Ninedarters
+		);
 
 		return playerStatistic;
 	}
