@@ -270,12 +270,5 @@ internal class MatchOverviewScreen : Screen
 
 		if (ImGuiExtensions.Button("Back", new Vector2(120, 0)))
 			this.ScreenNavigator.Pop();
-
-		ImGui.SameLine();
-
-		if (ImGuiExtensions.Button("Export", new Vector2(120, 0)))
-		{
-
-		}
 	}
 }
