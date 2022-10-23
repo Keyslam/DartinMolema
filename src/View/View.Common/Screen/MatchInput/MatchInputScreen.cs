@@ -268,6 +268,13 @@ internal class MatchInputScreen : Screen
 
 				if (this.Match.IsDone)
 				{
+					this.DependencyContainer.GetMatchRepository().Save(this.Match);
+					foreach (var player in this.Players)
+					{
+						player.PlayMatch(this.Match);
+						this.DependencyContainer.GetPlayerRepository().Save(player);
+					}
+
 					ScreenNavigator.PopToRoot();
 					ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(this.Match));
 				}
