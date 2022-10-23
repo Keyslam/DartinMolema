@@ -66,10 +66,10 @@ public class Leg : ILeg
 
 		var isTurnValid = this.IsTurnValid(legRules, turn);
 
-		if (!isTurnValid)
-			return 0;
-
 		var currentPoints = this.GetCurrentPlayerPoints();
+		if (!isTurnValid)
+			return legRules.TargetScore - currentPoints;
+
 		return legRules.TargetScore - (currentPoints + turn.ThrownPoints);
 	}
 
