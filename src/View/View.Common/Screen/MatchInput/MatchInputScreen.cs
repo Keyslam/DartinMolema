@@ -30,6 +30,13 @@ internal class MatchInputScreen : Screen
 			.ToList();
 
 		this.SelectFirstDartInput = new ImGuiExtensions.FireOnce(true);
+
+		this.DependencyContainer.GetMatchRepository().Save(this.Match);
+		foreach (var player in this.Players)
+		{
+			player.StartMatch(this.Match);
+			this.DependencyContainer.GetPlayerRepository().Save(player);
+		}
 	}
 
 	public override void Update()

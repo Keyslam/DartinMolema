@@ -24,6 +24,9 @@ internal class PlayerDTO
 	public List<Guid> LostMatches { get; set; }
 
 	[JsonProperty("g")]
+	public List<Guid> PlayingMatches { get; set; }
+
+	[JsonProperty("h")]
 	public PlayerStatisticDTO Statistic { get; set; }
 
 #pragma warning disable 8618
@@ -44,6 +47,9 @@ internal class PlayerDTO
 		this.LostMatches = player.LostMatches
 			.Select(match => match)
 			.ToList();
+		this.PlayingMatches = player.PlayingMatches
+			.Select(match => match)
+			.ToList();
 		this.Statistic = new PlayerStatisticDTO(player.Statistic);
 	}
 
@@ -58,6 +64,9 @@ internal class PlayerDTO
 		var lostMatches = this.LostMatches
 			.Select(matchId => matchId);
 
+		var playingMatches = this.PlayingMatches
+			.Select(matchId => matchId);
+
 		var statistic = this.Statistic.ToReal();
 
 		var player = new Player(
@@ -67,6 +76,7 @@ internal class PlayerDTO
 			playedMatches,
 			wonMatches,
 			lostMatches,
+			playingMatches,
 			statistic
 		);
 

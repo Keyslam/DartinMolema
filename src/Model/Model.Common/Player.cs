@@ -10,6 +10,7 @@ public class Player
 	public List<Guid> PlayedMatches { get; set; }
 	public List<Guid> WonMatches { get; set; }
 	public List<Guid> LostMatches { get; set; }
+	public List<Guid> PlayingMatches { get; set; }
 
 	public PlayerStatistic Statistic { get; set; }
 
@@ -21,10 +22,11 @@ public class Player
 		this.PlayedMatches = new List<Guid>();
 		this.WonMatches = new List<Guid>();
 		this.LostMatches = new List<Guid>();
+		this.PlayingMatches = new List<Guid>();
 		this.Statistic = new PlayerStatistic();
 	}
 
-	public Player(Guid id, string fullName, string country, IEnumerable<Guid> playedMatches, IEnumerable<Guid> wonMatches, IEnumerable<Guid> lostMatches, PlayerStatistic statistic)
+	public Player(Guid id, string fullName, string country, IEnumerable<Guid> playedMatches, IEnumerable<Guid> wonMatches, IEnumerable<Guid> lostMatches, IEnumerable<Guid> playingMatches, PlayerStatistic statistic)
 	{
 		this.Id = id;
 		this.FullName = fullName;
@@ -32,11 +34,19 @@ public class Player
 		this.PlayedMatches = new List<Guid>(playedMatches);
 		this.WonMatches = new List<Guid>(wonMatches);
 		this.LostMatches = new List<Guid>(lostMatches);
+		this.PlayingMatches = new List<Guid>(playingMatches);
 		this.Statistic = statistic;
+	}
+
+	public void StartMatch(Match match)
+	{
+		this.PlayingMatches.Add(match.Id);
 	}
 
 	public void PlayMatch(Match match)
 	{
+		this.PlayingMatches.Remove(match.Id);
+
 		var playerIndex = -1;
 		for (var index = 0; index < match.Players.Count; index++)
 		{

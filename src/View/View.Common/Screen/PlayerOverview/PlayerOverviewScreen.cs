@@ -11,8 +11,8 @@ internal class PlayerOverviewScreen : Screen
 {
 	private IPlayerRepository PlayerRepository { get; }
 
+	private IReadOnlyList<Match> PlayedMatches { get; }
 	private IReadOnlyList<Match> Matches { get; }
-	private string[] MatchTitles { get; }
 
 	private Player Player { get; }
 
@@ -24,13 +24,15 @@ internal class PlayerOverviewScreen : Screen
 
 		var matchRepository = dependencyContainer.GetMatchRepository();
 
-		this.Matches = player.PlayedMatches
+		this.PlayedMatches = player.PlayedMatches
 			.Select(matchId => matchRepository.Read(matchId)!)
 			.ToList();
 
-		this.MatchTitles = new string[this.Matches.Count];
-		for (var i = 0; i < this.Matches.Count; i++)
-			this.MatchTitles[i] = this.Matches[i].Name;
+		var playingMatches = player.PlayingMatches
+			.Select(matchId => matchRepository.Read(matchId)!)
+			.ToList();
+
+		this.Matches = Enumerable.Union(this.PlayedMatches, playingMatches).ToList();
 
 		this.Player = player;
 		this.SelectedMatch = 0;
@@ -46,7 +48,7 @@ internal class PlayerOverviewScreen : Screen
 		{
 			if (ImGui.TreeNodeEx("Matches", ImGuiTreeNodeFlags.DefaultOpen))
 			{
-				ImGui.Text($"Matches Played: {this.Matches.Count()}");
+				ImGui.Text($"Matches Played: {this.PlayedMatches.Count()}");
 				ImGui.Text($"Matches Won: {this.Player.WonMatches.Count}");
 				ImGui.Text($"Matches Lost: {this.Player.LostMatches.Count}");
 
@@ -69,11 +71,30 @@ internal class PlayerOverviewScreen : Screen
 
 		ImGui.Text("Matches");
 
-		var selectedMatch = this.SelectedMatch;
-		if (ImGui.ListBox("", ref selectedMatch, this.MatchTitles, this.MatchTitles.Count(), 20))
+		ImGui.SetCursorPosX(17);
+		ImGui.Text("Name");
+		ImGui.SameLine(500);
+		ImGui.Text("Done?");
+		if (ImGui.BeginChild("Matches", new Vector2(0, 250), true, ImGuiWindowFlags.HorizontalScrollbar))
 		{
-			this.SelectedMatch = selectedMatch;
-			this.ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(this.Matches[this.SelectedMatch]));
+			var i = 0;
+			foreach (var match in this.Matches)
+			{
+				if (ImGui.Selectable(match.Name, i == this.SelectedMatch))
+				{
+					this.SelectedMatch = i;
+					this.ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(match));
+				}
+				ImGui.SameLine(500);
+				if (match.IsDone)
+					ImGui.Text("Yes");
+				else
+					ImGui.Text("No");
+
+				i++;
+			}
+
+			ImGui.EndChild();
 		}
 
 		ImGui.NewLine();

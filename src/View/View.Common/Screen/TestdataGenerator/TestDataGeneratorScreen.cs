@@ -157,7 +157,7 @@ internal class TestdataGeneratorScreen : Screen
 		var matchRepositoryMock = new MatchRepositoryMock(matchRepository);
 		var playerRepositoryMock = new PlayerRepositoryMock(playerRepository);
 
-		var batches = 1;
+		var batches = 100;
 		var batchSize = matchCount / batches;
 
 		for (int i = 0; i < batches; i++)
