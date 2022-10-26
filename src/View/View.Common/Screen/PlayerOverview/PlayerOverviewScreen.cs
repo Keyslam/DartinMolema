@@ -48,7 +48,7 @@ internal class PlayerOverviewScreen : Screen
 		{
 			if (ImGui.TreeNodeEx("Matches", ImGuiTreeNodeFlags.DefaultOpen))
 			{
-				ImGui.Text($"Matches Played: {this.PlayedMatches.Count()}");
+				ImGui.Text($"Matches Finished: {this.PlayedMatches.Count()}");
 				ImGui.Text($"Matches Won: {this.Player.WonMatches.Count}");
 				ImGui.Text($"Matches Lost: {this.Player.LostMatches.Count}");
 
@@ -74,7 +74,7 @@ internal class PlayerOverviewScreen : Screen
 		ImGui.SetCursorPosX(17);
 		ImGui.Text("Name");
 		ImGui.SameLine(500);
-		ImGui.Text("Done?");
+		ImGui.Text("Finished?");
 		if (ImGui.BeginChild("Matches", new Vector2(0, 250), true, ImGuiWindowFlags.HorizontalScrollbar))
 		{
 			var i = 0;
