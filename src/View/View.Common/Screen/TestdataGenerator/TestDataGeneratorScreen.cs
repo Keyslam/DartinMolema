@@ -20,7 +20,7 @@ internal class TestdataGeneratorScreen : Screen
 
 		public Match? Read(Guid id) => Reader.Read(id);
 		public IReadOnlyList<Match> ReadAll() => Reader.ReadAll();
-		public IReadOnlyList<(Guid, string)> ReadAllNames() => Reader.ReadAllNames();
+		public IReadOnlyList<MatchMetadata> ReadAllMetadata() => Reader.ReadAllMetadata();
 
 		public void Save(Match t) { }
 	}
@@ -157,7 +157,7 @@ internal class TestdataGeneratorScreen : Screen
 		var matchRepositoryMock = new MatchRepositoryMock(matchRepository);
 		var playerRepositoryMock = new PlayerRepositoryMock(playerRepository);
 
-		var batches = 100;
+		var batches = 1;
 		var batchSize = matchCount / batches;
 
 		for (int i = 0; i < batches; i++)

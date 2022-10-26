@@ -266,9 +266,10 @@ internal class MatchInputScreen : Screen
 
 				SelectFirstDartInput.MakeActive();
 
+				this.DependencyContainer.GetMatchRepository().Save(this.Match);
+
 				if (this.Match.IsDone)
 				{
-					this.DependencyContainer.GetMatchRepository().Save(this.Match);
 					foreach (var player in this.Players)
 					{
 						player.PlayMatch(this.Match);

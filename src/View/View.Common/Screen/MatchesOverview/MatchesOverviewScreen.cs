@@ -12,7 +12,7 @@ internal class MatchesOverviewScreen : Screen
 	private IMatchRepository MatchRepository { get; }
 	private IPlayerRepository PlayerRepository { get; }
 
-	private Dictionary<Guid, string> MatchTitles { get; }
+	private IReadOnlyList<MatchMetadata> MatchMetaDatas { get; }
 
 	private string SearchInput { get; set; } = "";
 
@@ -23,12 +23,7 @@ internal class MatchesOverviewScreen : Screen
 		this.MatchRepository = dependencyContainer.GetMatchRepository();
 		this.PlayerRepository = dependencyContainer.GetPlayerRepository();
 
-		var matchNames = this.MatchRepository.ReadAllNames();
-		this.MatchTitles = new Dictionary<Guid, string>();
-		foreach (var (id, name) in matchNames)
-		{
-			this.MatchTitles[id] = name;
-		}
+		this.MatchMetaDatas = this.MatchRepository.ReadAllMetadata();
 	}
 
 	public override void Update()
@@ -44,19 +39,29 @@ internal class MatchesOverviewScreen : Screen
 
 		ImGuiExtensions.Spacing(3);
 
+		ImGui.SetCursorPosX(17);
+		ImGui.Text("Name");
+		ImGui.SameLine(308);
+		ImGui.Text("Done?");
 		if (ImGui.BeginChild("Matches", new Vector2(0, 250), true, ImGuiWindowFlags.HorizontalScrollbar))
 		{
 			var i = 0;
-			foreach (var (id, name) in this.MatchTitles)
+			foreach (var matchMetaData in this.MatchMetaDatas)
 			{
-				if (!name.ToLower().Contains(SearchInput)) continue;
+				if (!matchMetaData.Name.ToLower().Contains(SearchInput)) continue;
 
-				if (ImGui.Selectable(name, i == SelectedIndex))
+				if (ImGui.Selectable(matchMetaData.Name, i == SelectedIndex))
 				{
 					SelectedIndex = i;
-					var match = MatchRepository.Read(id)!;
+					var match = MatchRepository.Read(matchMetaData.Id)!;
+
 					this.ScreenNavigator.Push(DependencyContainer.MakeMatchOverviewScreen(match));
 				}
+				ImGui.SameLine(500);
+				if (matchMetaData.IsDone)
+					ImGui.Text("Yes");
+				else
+					ImGui.Text("No");
 
 				i++;
 			}
