@@ -62,9 +62,13 @@ public class LocalMatchRepository : IMatchRepository
 		return matches;
 	}
 
-	public IReadOnlyList<(Guid, string)> ReadAllNames()
+	public IReadOnlyList<MatchMetadata> ReadAllMetadata()
 	{
-		return this.ReadAll().Select(match => (match.Id, match.Name)).ToList();
+		return this.ReadAll().Select(x => new MatchMetadata(
+			x.Id,
+			x.Name,
+			x.IsDone
+		)).ToList();
 	}
 
 	private string GetBaseDirectory()

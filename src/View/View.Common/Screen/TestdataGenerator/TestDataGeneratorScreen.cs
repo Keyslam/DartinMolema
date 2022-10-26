@@ -20,7 +20,7 @@ internal class TestdataGeneratorScreen : Screen
 
 		public Match? Read(Guid id) => Reader.Read(id);
 		public IReadOnlyList<Match> ReadAll() => Reader.ReadAll();
-		public IReadOnlyList<(Guid, string)> ReadAllNames() => Reader.ReadAllNames();
+		public IReadOnlyList<MatchMetadata> ReadAllMetadata() => Reader.ReadAllMetadata();
 
 		public void Save(Match t) { }
 	}
