@@ -41,7 +41,7 @@ internal class MatchesOverviewScreen : Screen
 
 		ImGui.SetCursorPosX(17);
 		ImGui.Text("Name");
-		ImGui.SameLine(308);
+		ImGui.SameLine(500);
 		ImGui.Text("Done?");
 		if (ImGui.BeginChild("Matches", new Vector2(0, 250), true, ImGuiWindowFlags.HorizontalScrollbar))
 		{
